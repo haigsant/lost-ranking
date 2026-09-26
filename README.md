@@ -1,8 +1,9 @@
 # lost-ranking
 
 Auction dollar values for fantasy basketball from a ranking source's score.
-Default league: 10 teams, $200 budget, 9-cat roto, Yahoo roster
-(PG, SG, G, SF, PF, F, C, C, UTIL, UTIL + 3 BN = 13 per team, 130 drafted).
+Default league: 10 teams, $200 budget, 9-cat roto, roster
+PG, SG, SF, PF, C, G, PF/C, UTIL + 7 BN = 15 per team (150 drafted; IR not counted),
+with an 824-game season cap across all roster spots.
 
 ## Run
 
@@ -14,19 +15,23 @@ pytest
 ```
 
 Writes `output/<input>_values.csv` and `output/<input>_board.html` (an interactive auction board
-with position tiers; open it in a browser), and prints a position scarcity summary.
+with a Values page and a Strategy page; open it in a browser), and prints a position scarcity summary.
 
 ## How the dollars are set
 
-1. **Simulate the draft.** Walk players best score first, and put each one in the
-   most restrictive open slot they fit (C before F before UTIL before BN).
-   This fills every roster spot in the league and tells us who is draftable.
-2. **Replacement level.** The average score of the best 3 undrafted players,
-   for the whole field and for each position (PG/SG/SF/PF/C).
-3. **Value over replacement (VORP).** `score - replacement`.
-4. **Dollars.** Every drafted player costs at least $1. The remaining
-   `$2000 - 130 x $1 = $1870` is split in proportion to positive VORP.
-   Undrafted players are $0. Drafted values always add up to $2000.
+1. **Games cap -> core.** 824 games is about 10 full seasons (824 / 82), so only
+   about 10 players per team produce stats that count: the **core** (8 starters
+   + 2 bench). The other 5 roster spots are long shots.
+2. **Simulate the draft** twice, best score first, each player into the most
+   restrictive open slot they fit (C before PF/C before UTIL before BN):
+   the full rosters (who gets drafted) and the core only (whose games count).
+3. **Replacement level.** The average score of the best 3 players outside the
+   core, for the whole field and for each position (PG/SG/SF/PF/C).
+4. **Value over replacement (VORP).** `score - replacement`.
+5. **Dollars.** Two pools per team: $10 for the 5 long shots and $190 for the core.
+   Long shots get $1 plus a share of the rest by score (about $1-3 each).
+   Core players start at the top long-shot price and split the rest of the core
+   pool by positive VORP. Drafted values always add up to $2000.
 
 ## Output fields
 
@@ -44,7 +49,7 @@ with position tiers; open it in a browser), and prints a position scarcity summa
 | `cliff_after` | True when that drop is an outlier (a cliff) |
 | `scarcity_note` | Readable flag, e.g. "Last C before cliff: -6.02 to Karl-Anthony Towns" |
 | `field_vorp`, `pos_vorp`, `pos_replacement` | The numbers behind the dollars |
-| `drafted`, `draft_slot` | Whether and where the simulated draft rostered them |
+| `drafted`, `core`, `draft_slot` | Rostered at all / in the core whose games count / which slot |
 
 ### Tiers and cliffs
 
@@ -61,6 +66,19 @@ after any player where the drop to the next one stands out:
 
 All thresholds live in `LeagueSettings`.
 
+## Strategy page
+
+- **Game plan:** core size, core budget, long-shot budget, and the rules that follow from them.
+- **Roster planner:** your lineup slots, prefilled from a sample plan. Add, remove and
+  reprice players; it tracks money left, max bid, max core bid (keeping the long-shot
+  money), and what the average open core spot buys.
+- **Sample plans:** one superstar, two stars, and balanced, each solved for the best
+  10-player core within $190. At fair prices they project about the same total, so the
+  edge is buying under value.
+- **Where to spend:** field tiers marked Pay up (a major cliff follows), Deep: wait
+  (five or more near-equal players) or Fair price.
+- **Positions** and **long shots**.
+
 ## Layout
 
 ```
@@ -71,7 +89,9 @@ lost_ranking/
   valuation.py  draft simulation, replacement levels, VORP, dollars
   scarcity.py   position tiers, cliffs, position summary
   pipeline.py   load -> value -> scarcity -> output tables
-  report.py     HTML auction board (template in templates/board.html)
+  strategy.py   core budget, sample roster plans (integer program), tier buying guide
+  report.py     assembles the HTML board from templates/
+  templates/    base.html + common.js, then <page>.html/.js/.css per page (values, strategy)
   cli.py        command line
 ```
 

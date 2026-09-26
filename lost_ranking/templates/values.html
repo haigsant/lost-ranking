@@ -1,0 +1,41 @@
+<div class="view" id="view-values">
+  <nav class="jump" aria-label="Sections"><a href="#players">Player values</a><a href="#tiers-section">Tiers</a><a href="#scarcity">Position scarcity</a></nav>
+
+  <section id="players">
+    <h2>Player values</h2>
+    <div class="controls">
+      <input type="search" id="q" placeholder="Search player or team" aria-label="Search player or team">
+      <div class="seg" id="posf" role="group" aria-label="Filter by position"></div>
+      <label class="toggle"><input type="checkbox" id="drafted-only"> Drafted only</label>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="legend"><span><i class="major"></i>Major cliff</span><span><i class="minor"></i>Tier break</span><span><i class="dimk"></i>Not drafted</span><span>Lines show field tiers under ALL and that position's tiers when one is picked</span></div>
+    <div class="scroll">
+      <table class="players">
+        <thead><tr id="head"></tr></thead>
+        <tbody id="body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="tiers-section">
+    <h2>Tiers</h2>
+    <p class="lede">ALL groups the whole field by overall score. A position tab groups only the players eligible there, so you can see how deep each position runs.</p>
+    <div class="controls">
+      <div class="seg" id="tier-pos" role="group" aria-label="Tier position"></div>
+      <span class="count" id="tier-count"></span>
+    </div>
+    <div class="legend"><span><i class="major"></i>Major cliff</span><span><i class="minor"></i>Tier break</span><span><i class="dimk"></i>Not drafted</span><span>Chip: rank, player, auction value</span></div>
+    <div class="tiers" id="tiers"></div>
+  </section>
+
+  <section id="scarcity">
+    <h2>Position scarcity</h2>
+    <p class="lede">Replacement is the average score of the best three undrafted players at the position. Tiers split wherever the drop to the next player is at least twice the typical drop around it. Major cliffs are drops that are large for the position as a whole.</p>
+    <div class="scroll">
+      <table class="pos-table">
+        <thead><tr><th>Pos</th><th class="num">Drafted eligible</th><th class="num">Tiers</th><th class="num">Replacement</th><th class="num">vs field</th><th>Major cliffs</th></tr></thead>
+        <tbody id="pos-body"></tbody>
+      </table>
+    </div>
+</div>

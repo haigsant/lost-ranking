@@ -1,0 +1,67 @@
+<div class="view" id="view-strategy" hidden>
+  <nav class="jump" aria-label="Sections"><a href="#planner">Roster planner</a><a href="#plans">Sample plans</a><a href="#tier-guide">Where to spend</a><a href="#pos-outlook">Positions</a><a href="#long-shots">Long shots</a></nav>
+
+  <section id="game-plan">
+    <h2>Game plan</h2>
+    <div class="facts" id="facts"></div>
+    <ol class="rules" id="rules"></ol>
+  </section>
+
+  <section id="planner">
+    <h2>Roster planner</h2>
+    <p class="lede">Start from a sample plan, then swap players as the auction goes. Prices default to each player's value; change a price to what you actually paid. The first <span id="core-n"></span> spots are your core. The rest are long shots.</p>
+    <div class="controls">
+      <div class="seg" id="plan-pick" role="group" aria-label="Start from plan"></div>
+      <button type="button" class="ghost" id="clear-plan">Clear roster</button>
+    </div>
+    <div class="planner">
+      <div class="scroll">
+        <table class="roster">
+          <thead><tr><th>Slot</th><th>Player</th><th class="num">Price</th><th class="num">Score</th><th class="num">Field tier</th><th></th></tr></thead>
+          <tbody id="roster-body"></tbody>
+        </table>
+      </div>
+      <aside class="budget" aria-live="polite">
+        <div class="add">
+          <label for="add-player">Add player</label>
+          <input id="add-player" list="player-list" placeholder="Type a name" autocomplete="off">
+          <datalist id="player-list"></datalist>
+          <label for="add-price">Price</label>
+          <div class="add-row"><input id="add-price" type="number" min="1" step="1" inputmode="numeric"><button type="button" id="add-btn">Add</button></div>
+          <p class="hint" id="add-hint"></p>
+        </div>
+        <dl id="budget-stats"></dl>
+        <p class="hint" id="budget-advice"></p>
+      </aside>
+    </div>
+  </section>
+
+  <section id="plans">
+    <h2>Sample plans</h2>
+    <p class="lede" id="plans-lede"></p>
+    <div class="plan-grid" id="plan-grid"></div>
+  </section>
+
+  <section id="tier-guide">
+    <h2>Where to spend</h2>
+    <p class="lede">Field tiers inside the core pool. <b>Pay up</b>: a major cliff follows, so nobody later replaces them. <b>Deep: wait</b>: five or more near-equal players, so one will go at or under value once budgets thin out.</p>
+    <div class="scroll">
+      <table class="guide">
+        <thead><tr><th class="num">Tier</th><th>Advice</th><th class="num">Price</th><th class="num">Players</th><th class="num">Drop after</th><th>Who</th></tr></thead>
+        <tbody id="guide-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="pos-outlook">
+    <h2>Positions for your lineup</h2>
+    <p class="lede" id="slot-note"></p>
+    <div class="pos-cards" id="pos-cards"></div>
+  </section>
+
+  <section id="long-shots">
+    <h2>Long shots</h2>
+    <p class="lede">Best-scored players outside the core pool, priced from the $<span id="bench-budget"></span> long-shot budget. Their games mostly won't count, so pick for upside: injury returns, rookies, and players who could win a bigger role. Swap in your own picks.</p>
+    <div class="tier-players" id="long-list"></div>
+  </section>
+</div>

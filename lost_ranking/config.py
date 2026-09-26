@@ -4,18 +4,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-# Yahoo default 9-cat roster: 10 starters + 3 bench = 13 per team.
+# League roster: 8 starters + 7 bench = 15 per team (IR spots don't count).
 DEFAULT_ROSTER: dict[str, int] = {
     "PG": 1,
     "SG": 1,
-    "G": 1,
     "SF": 1,
     "PF": 1,
-    "F": 1,
-    "C": 2,
-    "UTIL": 2,
-    "BN": 3,
+    "C": 1,
+    "G": 1,
+    "PF/C": 1,
+    "UTIL": 1,
+    "BN": 7,
 }
+BENCH = "BN"
 
 
 @dataclass(frozen=True)
@@ -24,6 +25,17 @@ class LeagueSettings:
     budget_per_team: int = 200
     min_bid: int = 1
     roster: dict[str, int] = field(default_factory=lambda: dict(DEFAULT_ROSTER))
+    # Season games limit across all roster spots. Only about games_cap / games_per_player
+    # players per team actually produce stats (the "core"); the rest of the roster
+    # is depth worth the minimum bid. None = no cap, every roster spot counts.
+    games_cap: int | None = 824
+    games_per_player: int = 82
+    # Per-team dollars for the roster spots outside the core (long shots / depth).
+    bench_budget: int = 10
+    # Strategy plans: most core players eligible at a position. The score is one
+    # number, so this keeps plans from stacking big men (rebounds and blocks up,
+    # FT% and 3PM down).
+    core_position_caps: dict[str, int] = field(default_factory=lambda: {"C": 3})
     # Replacement level = mean score of the best N undrafted players (smooths noise).
     replacement_depth: int = 3
     # Tier breaks (minor cliffs): a gap to the next player at the position that is
@@ -44,13 +56,46 @@ class LeagueSettings:
         return sum(self.roster.values())
 
     @property
+    def starters(self) -> int:
+        return self.roster_size - self.roster.get(BENCH, 0)
+
+    @property
+    def core_size(self) -> int:
+        """Players per team whose games count toward the cap."""
+        if self.games_cap is None:
+            return self.roster_size
+        return max(self.starters, min(self.roster_size, round(self.games_cap / self.games_per_player)))
+
+    @property
     def draft_pool_size(self) -> int:
         return self.teams * self.roster_size
+
+    @property
+    def core_pool_size(self) -> int:
+        return self.teams * self.core_size
 
     @property
     def total_budget(self) -> int:
         return self.teams * self.budget_per_team
 
-    def league_slots(self) -> dict[str, int]:
-        """Slot counts across the whole league."""
-        return {slot: n * self.teams for slot, n in self.roster.items()}
+    @property
+    def bench_spots(self) -> int:
+        return self.roster_size - self.core_size
+
+    @property
+    def team_bench_budget(self) -> int:
+        """Per-team bench money: at least the minimum bid per spot, zero if there's no bench."""
+        return max(self.bench_budget, self.min_bid * self.bench_spots) if self.bench_spots else 0
+
+    @property
+    def core_budget(self) -> int:
+        """Per-team dollars for the core."""
+        return self.budget_per_team - self.team_bench_budget
+
+    def core_roster(self) -> dict[str, int]:
+        """Per-team slots for the core: every starter slot plus enough bench to reach core_size."""
+        return {**self.roster, BENCH: self.core_size - self.starters}
+
+    def league_slots(self, roster: dict[str, int] | None = None) -> dict[str, int]:
+        """Slot counts across the whole league (full roster by default)."""
+        return {slot: n * self.teams for slot, n in (roster or self.roster).items() if n}

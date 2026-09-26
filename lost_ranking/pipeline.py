@@ -34,6 +34,7 @@ OUTPUT_COLUMNS = [
     "pos_vorp",
     "pos_replacement",
     "drafted",
+    "core",
     "draft_slot",
     "source",
     "source_rank",
@@ -42,7 +43,7 @@ OUTPUT_COLUMNS = [
     "source_updated",
 ]
 
-TIER_PLAYER_COLUMNS = ["player", "team", "score", "auction_value", "drafted", "source_url"]
+TIER_PLAYER_COLUMNS = ["player", "team", "score", "auction_value", "drafted", "core", "source_url"]
 
 
 @dataclass

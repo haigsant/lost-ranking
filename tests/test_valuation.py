@@ -6,6 +6,7 @@ import pytest
 from lost_ranking import LeagueSettings, run
 from lost_ranking.positions import parse_positions, slot_priority
 from lost_ranking.scarcity import position_tiers
+from lost_ranking.strategy import PLAN_SPECS, build_strategy
 from lost_ranking.valuation import simulate_draft, value_players
 
 SAMPLE = Path(__file__).resolve().parents[1] / "data" / "raw" / "dynatyze_redraft_2026-09-25.csv"
@@ -39,7 +40,7 @@ def test_draft_reserves_scarce_position():
         ("G1", "PG", 10), ("G2", "PG", 9), ("G3", "PG", 8), ("G4", "PG", 7),
         ("G5", "PG", 6), ("C1", "C", 2), ("C2", "C", 1),
     ])
-    slots = simulate_draft(df, TINY)
+    slots = simulate_draft(df, TINY.league_slots())
     drafted = set(df.loc[slots.notna(), "player"])
     assert {"C1", "C2"} <= drafted
     assert "G5" not in drafted
@@ -97,3 +98,31 @@ def test_long_tiers_are_split():
     df = make_players([(f"C{i}", "C", 10 - 0.1 * i) for i in range(20)])
     tiers = c_tiers(df, LeagueSettings(max_tier_size=8))
     assert tiers.groupby("pos_tier").size().max() <= 8
+
+
+def test_games_cap_core_and_bench_pools():
+    settings = LeagueSettings()
+    players = run(SAMPLE, settings).players
+    core = players[players["core"]]
+    bench = players[players["drafted"] & ~players["core"]]
+    assert settings.core_size == 10  # 824 games / 82
+    assert len(core) == settings.core_pool_size
+    assert bench["auction_value"].sum() == pytest.approx(settings.teams * settings.bench_budget)
+    assert core["auction_value"].sum() == pytest.approx(settings.teams * settings.core_budget)
+    assert bench["auction_value"].max() <= core["auction_value"].min()
+
+
+def test_strategy_plans_fit_budget_and_slots():
+    settings = LeagueSettings()
+    result = run(SAMPLE, settings)
+    strategy = build_strategy(result.players, result.tiers, settings)
+    assert len(strategy["plans"]) == len(PLAN_SPECS)
+    for plan in strategy["plans"]:
+        picks = plan.picks
+        assert len(picks) == settings.core_size
+        assert picks["player"].is_unique
+        assert plan.spend <= settings.core_budget
+        assert sorted(picks["slot"]) == sorted(strategy["core_slots"])
+        assert (picks["price"] >= plan.spec.star_price).sum() == plan.spec.stars
+        for pos, cap in settings.core_position_caps.items():
+            assert picks["pos"].str.split("/").map(lambda p, pos=pos: pos in p).sum() <= cap

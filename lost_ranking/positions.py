@@ -14,6 +14,7 @@ SLOT_ELIGIBILITY: dict[str, frozenset[str] | None] = {
     "C": frozenset({"C"}),
     "G": frozenset({"PG", "SG", "G"}),
     "F": frozenset({"SF", "PF", "F"}),
+    "PF/C": frozenset({"PF", "C"}),
     "UTIL": None,
     "BN": None,
 }
