@@ -28,7 +28,7 @@ STANDALONE_HEAD = (
 )
 PLAYER_FIELDS = [
     "overall_rank", "player", "pos", "team", "score", "auction_value", "market_price", "market_gap",
-    "market_trend", "market_listed", "field_value",
+    "market_trend", "market_listed", "expected_price", "field_value",
     "scarcity_premium", "field_tier", "scarce_pos", "pos_tier", "cliff_strength", "scarcity_note",
     "drafted", "core", "source_url",
 ]
@@ -37,7 +37,10 @@ TIER_FIELDS = [
     "drafted", "core", "gap_to_next", "cliff_strength", "source_url",
 ]
 PICK_FIELDS = ["slot", "player", "pos", "price", "value_price", "score", "field_tier"]
-GAP_FIELDS = ["player", "pos", "team", "score", "auction_value", "market_price", "market_gap", "market_trend", "market_listed"]
+GAP_FIELDS = [
+    "player", "pos", "team", "score", "auction_value", "market_price", "expected_price",
+    "market_gap", "market_trend", "market_listed", "core", "field_tier",
+]
 
 
 def _records(df: pd.DataFrame, fields: list[str] | None = None) -> list[dict]:
@@ -68,10 +71,16 @@ def _strategy_payload(result: ValuationResult) -> dict:
                 "cost": p.spec.cost,
                 "total_score": round(p.total_score, 2),
                 "picks": _records(p.picks, PICK_FIELDS),
+                "bench": _records(p.bench, PICK_FIELDS),
+                "bench_spend": p.bench_spend,
             }
             for p in plans
         ],
-        "long_shots": _records(strategy["long_shots"], ["player", "pos", "team", "score", "price"]),
+        "long_shots": _records(strategy["long_shots"], ["player", "pos", "team", "score", "price", "value_price"]),
+        "price_bands": [
+            {**{k: v for k, v in band.items() if k != "players"}, "players": _records(band["players"], GAP_FIELDS)}
+            for band in strategy["price_bands"]
+        ] if strategy["price_bands"] else None,
         "tier_guide": _records(strategy["tier_guide"]),
         "market": {k: _records(v, GAP_FIELDS) for k, v in strategy["market"].items()} if strategy["market"] else None,
     }

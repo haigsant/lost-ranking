@@ -1,5 +1,5 @@
 <div class="view" id="view-strategy" hidden>
-  <nav class="jump" aria-label="Sections"><a href="#planner">Roster planner</a><a href="#plans">Sample plans</a><a href="#market-gaps">Market</a><a href="#tier-guide">Where to spend</a><a href="#pos-outlook">Positions</a><a href="#long-shots">Long shots</a></nav>
+  <nav class="jump" aria-label="Sections"><a href="#planner">Roster planner</a><a href="#plans">Sample plans</a><a href="#market-gaps">Steals</a><a href="#tier-guide">Where to spend</a><a href="#pos-outlook">Positions</a><a href="#long-shots">Long shots</a></nav>
 
   <section id="game-plan">
     <h2>Game plan</h2>
@@ -9,7 +9,7 @@
 
   <section id="planner">
     <h2>Roster planner</h2>
-    <p class="lede">Start from a sample plan, then swap players as the auction goes. Prices default to each player's value; change a price to what you actually paid. The first <span id="core-n"></span> spots are your core. The rest are long shots.</p>
+    <p class="lede">Start from a sample plan, then swap players as the auction goes. Prices default to what you should expect to pay (the market price when loaded, otherwise our value); change a price to what you actually paid. The first <span id="core-n"></span> spots are your core. The rest are long shots.</p>
     <div class="controls">
       <div class="seg" id="plan-pick" role="group" aria-label="Start from plan"></div>
       <button type="button" class="ghost" id="clear-plan">Clear roster</button>
@@ -43,12 +43,9 @@
   </section>
 
   <section id="market-gaps" hidden>
-    <h2>Market bargains</h2>
-    <p class="lede">Core players where the market's average auction price differs most from our value. Bargains stretch your budget; overpriced players are the ones to let someone else buy. * means the player isn't in the market list, so he usually goes for the minimum. Market prices come from ESPN leagues in general, not yours, and have no games cap.</p>
-    <div class="gap-grid">
-      <div class="scroll"><table><thead><tr><th>Bargain</th><th class="num">Value</th><th class="num">Market</th><th class="num">Gap</th></tr></thead><tbody id="bargain-body"></tbody></table></div>
-      <div class="scroll"><table><thead><tr><th>Overpriced</th><th class="num">Value</th><th class="num">Market</th><th class="num">Gap</th></tr></thead><tbody id="over-body"></tbody></table></div>
-    </div>
+    <h2>Where the steals are</h2>
+    <p class="lede" id="bands-lede"></p>
+    <div class="band-grid" id="bands"></div>
   </section>
 
   <section id="market-missing">
@@ -75,7 +72,7 @@
 
   <section id="long-shots">
     <h2>Long shots</h2>
-    <p class="lede">Best-scored players outside the core pool, priced from the $<span id="bench-budget"></span> long-shot budget. Their games mostly won't count, so pick for upside: injury returns, rookies, and players who could win a bigger role. Swap in your own picks.</p>
+    <p class="lede">The best bench the long-shot budget buys, from the <b id="long-shots-plan"></b> plan. Their games mostly won't count, so any real player here is a win: they cover injuries and rest days. Swap in upside picks (injury returns, rookies, role changes) if you prefer.</p>
     <div class="tier-players" id="long-list"></div>
   </section>
 </div>

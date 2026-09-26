@@ -126,7 +126,7 @@ def add_scarcity(df: pd.DataFrame, tiers: pd.DataFrame) -> pd.DataFrame:
 
 
 def position_summary(
-    df: pd.DataFrame, tiers: pd.DataFrame, levels: dict[str, float]
+    df: pd.DataFrame, tiers: pd.DataFrame, levels: dict[str, float], starters: dict[str, float]
 ) -> pd.DataFrame:
     """One row per base position: depth, replacement level, tier count, major cliffs."""
     rows = []
@@ -139,6 +139,7 @@ def position_summary(
                 "pos": pos,
                 "eligible_drafted": len(pool),
                 "tiers": int(pool["pos_tier"].max()) if len(pool) else 0,
+                "starter_level": round(starters[pos], 2) if pos in starters else None,
                 "replacement": round(levels[pos], 2),
                 "vs_field": round(levels[pos] - levels["ALL"], 2),
                 "major_cliffs": "; ".join(

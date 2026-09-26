@@ -9,21 +9,31 @@ function canFill(slot, pos) {
   return !allowed || pos.split("/").some(t => allowed.includes(t));
 }
 
-// Bipartite matching (Kuhn): place the priciest players first so they start.
+// Bipartite matching (Kuhn) over the starting slots, best score first. A matched player
+// is only ever moved to another slot, never dropped, so the best players start; everyone
+// else fills the bench in score order (core bench spots first).
 function assignSlots(picks) {
   const slots = S.roster_slots;
   const owner = Array(slots.length).fill(-1);
-  const tryAssign = (i, seen) => {
-    for (let j = 0; j < slots.length; j++) {
-      if (seen[j] || !canFill(slots[j], picks[i].pos)) continue;
-      seen[j] = true;
-      if (owner[j] === -1 || tryAssign(owner[j], seen)) { owner[j] = i; return true; }
-    }
-    return false;
+  const order = picks.map((_, i) => i).sort((a, b) => picks[b].score - picks[a].score);
+  const place = (i, usable) => {
+    const tryAssign = (k, seen) => {
+      for (let j = 0; j < slots.length; j++) {
+        if (!usable(j) || seen[j] || !canFill(slots[j], picks[k].pos)) continue;
+        seen[j] = true;
+        if (owner[j] === -1 || tryAssign(owner[j], seen)) { owner[j] = k; return true; }
+      }
+      return false;
+    };
+    return tryAssign(i, Array(slots.length).fill(false));
   };
+  const starting = j => slots[j] !== S.bench;
+  const benchSlots = slots.map((_, j) => j).filter(j => !starting(j));
   const unplaced = [];
-  picks.map((_, i) => i).sort((a, b) => picks[b].price - picks[a].price)
-    .forEach(i => { if (!tryAssign(i, Array(slots.length).fill(false))) unplaced.push(picks[i]); });
+  order.filter(i => !place(i, starting)).forEach(i => {
+    const j = benchSlots.find(k => owner[k] === -1);
+    if (j === undefined) unplaced.push(picks[i]); else owner[j] = i;
+  });
   return { owner, unplaced };
 }
 
@@ -38,7 +48,7 @@ function pickFor(name, price) {
 function loadPlan(key) {
   const plan = S.plans.find(p => p.key === key);
   planner.plan = key;
-  planner.picks = plan.picks.map(p => pickFor(p.player, p.price));
+  planner.picks = [...plan.picks, ...plan.bench].map(p => pickFor(p.player, p.price));
   renderPlanner();
 }
 
@@ -113,7 +123,6 @@ function renderStrategyStatic() {
   const bigDrop = pay.reduce((m, t) => Math.max(m, t.drop_after || 0), 0);
   const caps = Object.entries(L.core_position_caps).map(([p, n]) => `${n} ${p}-eligible`).join(", ");
   $("core-n").textContent = S.core_size;
-  $("bench-budget").textContent = S.bench_budget;
 
   $("facts").innerHTML = [
     [S.core_size, "players count", `${S.games_cap} games ÷ ${S.games_per_player}`],
@@ -127,20 +136,24 @@ function renderStrategyStatic() {
     `<b>Pay up before a major cliff.</b> ${esc(elite)} have no replacement once they're gone; the biggest drop after them is ${bigDrop.toFixed(2)} points. Tiers marked Pay up below are the ones you can't make up later.`,
     deep ? `<b>Be patient in deep tiers.</b> Tier ${deep.tier} has ${deep.count} near-equal players at $${Math.round(deep.low)}–$${Math.round(deep.high)}. If one goes over value, let it go; the next one is the same player on paper.` : "",
     `<b>Know your max bid.</b> The hard limit is money left minus $${L.min_bid} for every other open spot. For core buys, also hold back what's left of the $${S.bench_budget} long-shot money. The planner tracks both.`,
+    S.price_bands ? `<b>Hunt steals in the $10–20 range.</b> That's where seasons are made: players the market prices there but we value far higher. Any core-quality player under $10 is a big win, for a starting slot or the bench. See Where the steals are below.` : "",
+    S.price_bands ? `<b>Expect to overpay for stars.</b> Anyone the market prices at $${S.star_price}+ usually goes ${Math.round(S.star_premium * 100)}% over average. Pay it for a player right before a major cliff; let hype-only stars go.` : "",
     `<b>Balance categories yourself.</b> The score is one number, so it can't see category fit. The sample plans allow at most ${caps} core players so they don't stack big men.`,
   ].filter(Boolean).map(r => `<li>${r}</li>`).join("");
 
   $("plan-pick").innerHTML = S.plans.map(p => `<button type="button" data-plan="${p.key}" aria-pressed="false">${esc(p.name)}</button>`).join("");
 
   const atValue = S.plans.filter(p => p.cost === "value").map(p => p.total_score);
-  const market = S.plans.find(p => p.cost === "market");
+  const market = S.plans.find(p => p.cost === "expected") || S.plans.find(p => p.cost === "market");
   $("plans-lede").textContent = `At our values, every plan spends $${S.core_budget} on the core and projects a core score between ${Math.min(...atValue).toFixed(1)} and ${Math.max(...atValue).toFixed(1)}. Prices are fair, so no build pulls far ahead; the max-score plan is the ceiling. ` +
-    (market ? `At market prices the best core scores ${market.total_score.toFixed(1)}: players the market underrates let $${market.spend} buy $${market.worth} of our value.` : `The real edge is paying under value. Load market prices to find where.`);
+    (market ? `At realistic market prices (stars at a premium) the best core scores ${market.total_score.toFixed(1)}: players the market underrates let $${market.spend} buy $${market.worth} of our value. That's the plan to draft from.` : `The real edge is paying under value. Load market prices to find where.`);
   $("plan-grid").innerHTML = S.plans.map(p => `
     <article class="plan">
       <header><h3>${esc(p.name)}</h3><p>${esc(p.summary)}</p></header>
       <div class="plan-totals"><span>Spend <b>$${p.spend}</b>${p.cost === "market" ? " at market" : ""}</span><span>Core score <b>${p.total_score.toFixed(2)}</b></span>${p.worth !== p.spend ? `<span>Worth <b>$${p.worth}</b> at our value</span>` : ""}</div>
       <ul>${p.picks.map(x => `<li><span class="slot">${slotLabel(x.slot)}</span><span class="n">${esc(x.player)}</span><span class="v">$${x.price}</span></li>`).join("")}</ul>
+      <p class="bench-label">Long shots · $${p.bench_spend}</p>
+      <ul class="bench-list">${p.bench.map(x => `<li><span class="slot">Bench</span><span class="n">${esc(x.player)}</span><span class="v">$${x.price}</span></li>`).join("")}</ul>
       <button type="button" class="ghost" data-load="${p.key}">Open in planner</button>
     </article>`).join("");
 
@@ -153,16 +166,31 @@ function renderStrategyStatic() {
 
   renderPositionCards();
   renderMarket();
-  $("long-list").innerHTML = S.long_shots.map(p => `<span class="tp"><span class="n">${esc(p.player)}</span><span class="r">${esc(p.pos)} · ${esc(p.team || "FA")}</span><span class="v">$${p.price}</span></span>`).join("");
+  $("long-shots-plan").textContent = S.long_shots_plan;
+  $("long-list").innerHTML = S.long_shots.map(p => `<span class="tp"><span class="n">${esc(p.player)}</span><span class="r">${esc(p.pos)} · ${esc(p.team || "FA")} · worth ${money(p.value_price)}</span><span class="v">$${p.price}</span></span>`).join("");
 }
 
 function renderMarket() {
-  $("market-gaps").hidden = !S.market;
-  $("market-missing").hidden = !!S.market;
-  if (!S.market) return;
-  const row = p => `<tr><td>${esc(p.player)} <span class="pos-cell">${esc(p.pos)}</span></td><td class="num">${money(p.auction_value)}</td><td class="num">${money(p.market_price)}${p.market_listed === false ? "*" : ""}</td><td class="num ${p.market_gap > 0 ? "up" : "down"}">${p.market_gap > 0 ? "+" : "−"}$${Math.abs(p.market_gap).toFixed(0)}</td></tr>`;
-  $("bargain-body").innerHTML = S.market.bargains.map(row).join("");
-  $("over-body").innerHTML = S.market.overpriced.map(row).join("");
+  $("market-gaps").hidden = !S.price_bands;
+  $("market-missing").hidden = !!S.price_bands;
+  if (!S.price_bands) return;
+  const premium = Math.round(S.star_premium * 100);
+  $("bands-lede").textContent = `Our tiers say who is good. The market says what people pay, hype and scarcity included. Expect to pay ${premium}% over the average for anyone the market prices at $${S.star_price}+, and pay it when a cliff follows. Then hunt the $10–20 range, where seasons are made, and treat any core-quality player under $10 as a big win, for starters and bench alike. * means not in the market list, so he usually goes for the minimum. Market prices are ESPN-wide averages, not your league's.`;
+  const listed = p => `${money(p.market_price)}${p.market_listed === false ? "*" : ""}`;
+  const gap = v => `<td class="num ${v > 0 ? "up" : "down"}">${v > 0 ? "+" : "−"}$${Math.abs(v).toFixed(0)}</td>`;
+  const role = p => (p.core ? `Starter · tier ${p.field_tier}` : "Bench");
+  const starRow = p => {
+    const over = p.expected_price - p.auction_value;
+    const verdict = over > 5 ? `<span class="pill fair">Overpriced by $${Math.round(over)}</span>` : over < -5 ? `<span class="pill wait">Still a buy</span>` : `<span class="pill pay">Fair: pay it</span>`;
+    return `<tr><td>${esc(p.player)} <span class="pos-cell">${esc(p.pos)}</span></td><td class="num">${money(p.auction_value)}</td><td class="num">${listed(p)}</td><td class="num"><b>${money(p.expected_price)}</b></td><td>${verdict}</td></tr>`;
+  };
+  const stealRow = p => `<tr><td>${esc(p.player)} <span class="pos-cell">${esc(p.pos)}</span></td><td class="pos-cell">${role(p)}</td><td class="num">${money(p.auction_value)}</td><td class="num">${listed(p)}</td>${gap(p.market_gap)}</tr>`;
+  const card = (title, sub, head, rows, wide = false) => `<article class="band${wide ? " wide" : ""}"><header><h3>${title}</h3><p>${sub}</p></header><div class="scroll"><table><thead><tr>${head.map(h => `<th class="${h.num ? "num" : ""}">${h.label}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div></article>`;
+  const H = (label, num = false) => ({ label, num });
+  $("bands").innerHTML = S.price_bands.map(b => b.kind === "stars"
+    ? card(b.label, `What top talent will really cost: market + ${premium}% when the market treats him as a star.`, [H("Player"), H("Value", 1), H("Market", 1), H("Plan to pay", 1), H("")], b.players.map(starRow).join(""), true)
+    : card(b.label, b.high ? `Market price $${b.low}–$${b.high}, biggest gap to our value first.` : `Market price under $${b.high ?? b.low}`, [H("Player"), H("Role"), H("Value", 1), H("Market", 1), H("Gap", 1)], b.players.map(stealRow).join(""))
+  ).join("") + (S.market ? card("Overpriced: let them go", "The market pays well over our value. Let someone else spend on hype.", [H("Player"), H("Role"), H("Value", 1), H("Market", 1), H("Gap", 1)], S.market.overpriced.slice(0, 10).map(stealRow).join("")) : "");
 }
 
 function renderPositionCards() {

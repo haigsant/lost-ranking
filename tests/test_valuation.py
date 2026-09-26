@@ -51,7 +51,7 @@ def test_values_sum_to_budget_and_undrafted_are_zero():
         ("G1", "PG", 10), ("G2", "PG", 9), ("G3", "PG", 8), ("G4", "PG", 7),
         ("G5", "PG", 6), ("C1", "C", 2), ("C2", "C", 1), ("C3", "C", 0),
     ])
-    out, levels = value_players(df, TINY)
+    out, levels, _ = value_players(df, TINY)
     assert out["auction_value"].sum() == pytest.approx(TINY.total_budget)
     assert out["field_value"].sum() == pytest.approx(TINY.total_budget)
     assert (out.loc[~out["drafted"], "auction_value"] == 0).all()
@@ -156,3 +156,33 @@ def test_market_prices_join_and_market_plan():
     assert market_plan.spend <= settings.core_budget
     assert market_plan.worth > market_plan.spend
     assert strategy["market"]["bargains"].iloc[0]["market_gap"] > 0
+
+
+def test_expected_price_premium_only_for_market_stars():
+    from lost_ranking.market import expected_price
+
+    settings = LeagueSettings()  # star_price 40, premium 10%
+    df = pd.DataFrame({"auction_value": [80.0, 46.0, 12.0, 20.0], "market_price": [70.0, 26.0, 8.0, None]})
+    assert expected_price(df, settings).tolist() == pytest.approx([77.0, 26.0, 8.0, 20.0])
+
+
+def test_starter_scarcity_favors_thin_positions():
+    from dataclasses import replace
+
+    settings = LeagueSettings()
+    base = run(SAMPLE, replace(settings, starter_scarcity_weight=0.0)).players.set_index("player")
+    scarce = run(SAMPLE, settings)
+    assert scarce.starter_levels["C"] < scarce.starter_levels["PG"]
+    p = scarce.players.set_index("player")
+    assert p.loc["Jalen Duren", "auction_value"] > base.loc["Jalen Duren", "auction_value"]  # C only
+    assert p.loc["Jalen Brunson", "auction_value"] < base.loc["Jalen Brunson", "auction_value"]  # PG only
+    assert p.loc[p["core"], "auction_value"].sum() == pytest.approx(settings.teams * settings.core_budget)
+
+
+def test_plan_bench_fits_bench_budget():
+    settings = LeagueSettings()
+    result = run(SAMPLE, settings, market_path=MARKET)
+    for plan in build_strategy(result.players, result.tiers, settings)["plans"]:
+        assert len(plan.bench) == settings.bench_spots
+        assert plan.bench_spend <= settings.team_bench_budget
+        assert not set(plan.bench["player"]) & set(plan.picks["player"])

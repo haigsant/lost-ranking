@@ -25,7 +25,7 @@ const maxValue = Math.max(...DATA.players.map(p => p.auction_value));
 
 function renderValuesStatic() {
   $("pos-body").innerHTML = DATA.positions.map(p => `
-    <tr><td class="pos-tag">${p.pos}</td><td class="num">${p.eligible_drafted}</td><td class="num">${p.tiers}</td>
+    <tr><td class="pos-tag">${p.pos}</td><td class="num">${p.eligible_drafted}</td><td class="num">${p.tiers}</td><td class="num">${p.starter_level == null ? "–" : p.starter_level.toFixed(2)}</td>
     <td class="num">${p.replacement.toFixed(2)}</td><td class="num">${p.vs_field.toFixed(2)}</td>
     <td class="cliffs">${(p.major_cliffs || "").split("; ").filter(Boolean).map(c => {
       const m = c.match(/^after (#\d+) (.+) \((-[\d.]+)\)$/);

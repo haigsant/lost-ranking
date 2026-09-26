@@ -9,6 +9,8 @@ Method (standard value-over-replacement auction pricing, adjusted for a games ca
   2. Replacement level = the best players outside the core, both for the whole
      field and for each base position. With a games cap, a bench player's games
      mostly don't count, so the core's edge over them is what wins categories.
+     Starter scarcity: a position whose last starter is weak (e.g. the 15th-best C
+     vs the 15th-best PG) gets a score edge, since good players there run out first.
   3. VORP = score - replacement.
   4. Budget splits into a core pool and a small bench pool (bench_budget per
      team). Every drafted player costs at least min_bid; the rest of each pool
@@ -26,7 +28,7 @@ from __future__ import annotations
 import pandas as pd
 
 from .config import LeagueSettings
-from .positions import BASE_POSITIONS, base_positions, can_fill, slot_priority
+from .positions import BASE_POSITIONS, SLOT_ELIGIBILITY, base_positions, can_fill, slot_priority
 
 
 def simulate_draft(df: pd.DataFrame, slots: dict[str, int]) -> pd.Series:
@@ -100,14 +102,53 @@ def to_dollars(
     return core_dollars + bench_dollars
 
 
-def _scarcest_position(positions: frozenset[str], levels: dict[str, float]) -> str:
-    """Eligible base position with the lowest replacement level ('UTIL' if none)."""
+def starter_demand(settings: LeagueSettings) -> dict[str, float]:
+    """League-wide starting spots per base position. A slot open to several base positions
+    (G, PF/C) is split evenly between them; UTIL and bench are open to everyone and skipped."""
+    demand = dict.fromkeys(BASE_POSITIONS, 0.0)
+    for slot, n in settings.roster.items():
+        allowed = [p for p in BASE_POSITIONS if SLOT_ELIGIBILITY[slot] and p in SLOT_ELIGIBILITY[slot]]
+        for pos in allowed:
+            demand[pos] += n * settings.teams / len(allowed)
+    return demand
+
+
+def starter_levels(df: pd.DataFrame, settings: LeagueSettings) -> dict[str, float]:
+    """Score of the last starter at each position: the Nth-best eligible player, N = its demand."""
+    levels = {}
+    for pos, n in starter_demand(settings).items():
+        eligible = df.loc[df["positions"].map(lambda p, pos=pos: pos in p), "score"]
+        if n and len(eligible):
+            levels[pos] = float(eligible.iloc[min(round(n), len(eligible)) - 1])
+    return levels
+
+
+def position_edge(levels: dict[str, float], starters: dict[str, float], weight: float) -> dict[str, float]:
+    """Score bonus per position vs. the field (positive = scarce).
+
+    Bench depth: how much worse the position's replacement is than the field's.
+    Starter depth: how much worse its last starter is than the average position's.
+    """
+    mean_starter = sum(starters.values()) / len(starters) if starters else 0.0
+    return {
+        pos: (levels["ALL"] - levels[pos]) + weight * (mean_starter - starters.get(pos, mean_starter))
+        for pos in BASE_POSITIONS
+    }
+
+
+def _scarcest_position(positions: frozenset[str], edge: dict[str, float]) -> str:
+    """Eligible base position with the biggest scarcity edge ('UTIL' if none)."""
     eligible = base_positions(positions)
-    return min(eligible, key=levels.__getitem__) if eligible else "UTIL"
+    return max(eligible, key=edge.__getitem__) if eligible else "UTIL"
 
 
-def value_players(df: pd.DataFrame, settings: LeagueSettings) -> tuple[pd.DataFrame, dict[str, float]]:
-    """Add draft, replacement, VORP and dollar columns. Returns (df, replacement levels)."""
+def value_players(
+    df: pd.DataFrame, settings: LeagueSettings
+) -> tuple[pd.DataFrame, dict[str, float], dict[str, float]]:
+    """Add draft, replacement, VORP and dollar columns.
+
+    Returns (df, replacement levels, starter levels).
+    """
     df = df.sort_values("score", ascending=False, ignore_index=True)
     roster_slot = simulate_draft(df, settings.league_slots())
     core_slot = simulate_draft(df, settings.league_slots(settings.core_roster()))
@@ -118,8 +159,11 @@ def value_players(df: pd.DataFrame, settings: LeagueSettings) -> tuple[pd.DataFr
     df["draft_slot"] = core_slot.where(core, roster_slot)
 
     levels = replacement_levels(df, core, settings)
-    df["scarce_pos"] = df["positions"].map(lambda p: _scarcest_position(p, levels))
-    df["pos_replacement"] = df["scarce_pos"].map(lambda p: levels.get(p, levels["ALL"]))
+    starters = starter_levels(df, settings)
+    edge = position_edge(levels, starters, settings.starter_scarcity_weight)
+    df["scarce_pos"] = df["positions"].map(lambda p: _scarcest_position(p, edge))
+    df["pos_edge"] = df["scarce_pos"].map(lambda p: edge.get(p, 0.0))
+    df["pos_replacement"] = levels["ALL"] - df["pos_edge"]
 
     df["field_vorp"] = df["score"] - levels["ALL"]
     df["pos_vorp"] = df["score"] - df["pos_replacement"]
@@ -128,4 +172,4 @@ def value_players(df: pd.DataFrame, settings: LeagueSettings) -> tuple[pd.DataFr
     df["scarcity_premium"] = df["pos_value"] - df["field_value"]
     df["auction_value"] = df["pos_value"]
     df["overall_rank"] = range(1, len(df) + 1)
-    return df, levels
+    return df, levels, starters

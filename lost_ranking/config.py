@@ -36,8 +36,20 @@ class LeagueSettings:
     # number, so this keeps plans from stacking big men (rebounds and blocks up,
     # FT% and 3PM down).
     core_position_caps: dict[str, int] = field(default_factory=lambda: {"C": 3})
+    # Market behavior: players the market prices at star_price or more rarely go for
+    # their average; plan on star_premium above it. Everyone else is planned at market.
+    star_price: int = 40
+    star_premium: float = 0.10
+    # Market-price bands for finding steals: (label, low, high); high None = no cap.
+    price_bands: tuple[tuple[str, int, int | None], ...] = (
+        ("Steal zone", 10, 20),
+        ("Under $10", 0, 10),
+    )
     # Replacement level = mean score of the best N undrafted players (smooths noise).
     replacement_depth: int = 3
+    # Starter scarcity: how much a position's weaker starters (e.g. the 15th-best C vs the
+    # 15th-best PG) add to or take from its players' value. 0 = off, 1 = full score gap.
+    starter_scarcity_weight: float = 1.0
     # Tier breaks (minor cliffs): a gap to the next player at the position that is
     # at least tier_ratio x the median gap among its neighbors (tier_window on each
     # side), so smaller drops still split groups further down the list.

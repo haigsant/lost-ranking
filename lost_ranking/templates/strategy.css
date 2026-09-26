@@ -60,3 +60,11 @@ code { font-size: 12px; background: var(--chip); padding: 1px 5px; border-radius
   .planner { grid-template-columns: 1fr; }
   .budget { position: static; }
 }
+
+.band-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 12px; }
+.band { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px; display: grid; gap: 10px; align-content: start; }
+.band.wide { grid-column: 1 / -1; }
+.band header p { margin: 4px 0 0; color: var(--muted); line-height: 1.4; }
+.band .scroll { border: 0; border-radius: 0; }
+.bench-label { margin: 4px 0 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 600; }
+.bench-list li { opacity: 0.8; }

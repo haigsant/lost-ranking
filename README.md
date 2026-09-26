@@ -29,6 +29,10 @@ with a Values page and a Strategy page; open it in a browser), and prints a posi
    the full rosters (who gets drafted) and the core only (whose games count).
 3. **Replacement level.** The average score of the best 3 players outside the
    core, for the whole field and for each position (PG/SG/SF/PF/C).
+   **Starter scarcity:** each position's "last starter" is its Nth-best eligible player,
+   where N is the league's starting spots for it (G and PF/C split between their
+   positions). Centers run out first (the 15th-best C scores 1.23 vs 2.26 at PG), so
+   centers gain value and guards give some up. Tune with `starter_scarcity_weight`.
 4. **Value over replacement (VORP).** `score - replacement`.
 5. **Dollars.** Two pools per team: $10 for the 5 long shots and $190 for the core.
    Long shots get $1 plus a share of the rest by score (about $1-3 each).
@@ -43,6 +47,8 @@ with a Values page and a Strategy page; open it in a browser), and prints a posi
 | `market_price`, `market_trend` | Average auction price and its trend from the market file (with `--market`) |
 | `market_listed` | False when a drafted player isn't in the market list; he's priced at the $1 minimum |
 | `market_gap` | `auction_value - market_price`: positive means the market pays less than our value |
+| `expected_price` | What to plan on paying: market, +10% for market-priced stars |
+| `pos_edge` | Score bonus from position scarcity (bench and starter depth) at `scarce_pos` |
 | `field_value` | Price vs. the best undrafted player at any position |
 | `scarcity_premium` | `auction_value - field_value`: what position scarcity adds or removes |
 | `field_tier` | Tier across the whole field (all positions), using the same tier rules |
@@ -77,6 +83,11 @@ All thresholds live in `LeagueSettings`.
 - **Roster planner:** your lineup slots, prefilled from a sample plan. Add, remove and
   reprice players; it tracks money left, max bid, max core bid (keeping the long-shot
   money), and what the average open core spot buys.
+- **Pay up for stars, steal the rest** (with `--market`): the plan to draft from. Anyone the
+  market prices at $40+ costs 10% over average (`star_price`, `star_premium`); everyone
+  else costs the market price. Every plan also gets the best 5-man bench $10 buys.
+- **Where the steals are** (with `--market`): stars and what to plan on paying, the
+  $10–20 steal zone, under-$10 wins, and overpriced players to let go (`price_bands`).
 - **Sample plans:** one superstar, two stars, balanced, and max score (the ceiling), each
   solved for the best 10-player core within $190. At fair prices they project about the
   same total, so the edge is buying under value. With `--market`, a fifth plan buys at
@@ -94,6 +105,7 @@ lost_ranking/
   positions.py  parse "PG/SG/G", slot eligibility, slot order
   loaders.py    source CSV -> standard columns (add ranking or market sources here)
   names.py      name keys for joining sources (accents, Jr./III, punctuation)
+  market.py     join market prices; expected price (stars at a premium)
   valuation.py  draft simulation, replacement levels, VORP, dollars
   scarcity.py   position tiers, cliffs, position summary
   pipeline.py   load -> value -> scarcity -> output tables
