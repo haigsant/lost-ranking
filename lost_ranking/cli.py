@@ -10,7 +10,8 @@ import pandas as pd
 from .config import LeagueSettings
 from .loaders import MARKET_COLUMN_MAPS, SOURCE_COLUMN_MAPS
 from .pipeline import run
-from .report import write_board
+from .report import STANDALONE_HEAD, render_board
+from .simulate import SimSettings
 
 MONEY_COLUMNS = ["auction_value", "field_value", "scarcity_premium", "market_price", "market_gap"]
 SCORE_COLUMNS = ["score", "gap_to_next", "field_vorp", "pos_vorp", "pos_replacement"]
@@ -28,6 +29,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--budget", type=int, default=defaults.budget_per_team)
     p.add_argument("--top", type=int, default=30, help="rows to print (0 = none)")
     p.add_argument("--no-html", action="store_true", help="skip the HTML auction board")
+    p.add_argument("--scenarios", type=int, default=SimSettings().scenarios,
+                   help="simulated auctions for the strategy optimizer (needs --market; 0 = skip)")
+    p.add_argument("--embed", type=Path, help="also write the board without a document head (for hosts that add one)")
     return p.parse_args(argv)
 
 
@@ -66,7 +70,14 @@ def main(argv: list[str] | None = None) -> None:
             print(players[cols].head(args.top).to_string(index=False))
     print(f"\nWrote {output}")
     if not args.no_html:
-        print(f"Wrote {write_board(result, output.with_name(f'{args.csv.stem}_board.html'))}")
+        html = render_board(result, standalone=False, sim=SimSettings(scenarios=args.scenarios) if args.market else None)
+        board = output.with_name(f"{args.csv.stem}_board.html")
+        board.write_text(STANDALONE_HEAD + html, encoding="utf-8")
+        print(f"Wrote {board}")
+        if args.embed:
+            args.embed.parent.mkdir(parents=True, exist_ok=True)
+            args.embed.write_text(html, encoding="utf-8")
+            print(f"Wrote {args.embed}")
 
 
 if __name__ == "__main__":

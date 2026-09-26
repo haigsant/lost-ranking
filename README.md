@@ -12,7 +12,7 @@ pip install -e ".[dev]"
 python -m lost_ranking data/raw/dynatyze_redraft_2026-09-25.csv
 # options: --teams 12 --budget 200 --top 50 -o output/my_values.csv
 # add market prices (ESPN average auction price CSV from the espn-auction-values skill):
-#   --market data/raw/espn_auction_values_2026-09-25.csv
+#   --market data/raw/espn_auction_values_2026-09-25.csv   (adds the optimizer; --scenarios 60)
 pytest
 ```
 
@@ -83,6 +83,14 @@ All thresholds live in `LeagueSettings`.
 - **Roster planner:** your lineup slots, prefilled from a sample plan. Add, remove and
   reprice players; it tracks money left, max bid, max core bid (keeping the long-shot
   money), and what the average open core spot buys.
+- **Optimized plan** (with `--market`): the hypothesis "pay up for a few stars, steal the
+  rest" turned into a family of strategies (0-3 stars targeted x how far over expected
+  price to chase them) and scored over simulated auctions (`simulate.py`). Clearing prices
+  swing around market (`price_noise`), other managers bid away part of each bargain
+  (`bargain_shrink`), and a lost star's money flows back to depth. Shows every strategy's
+  average and 10th-90th percentile core score, star max bids, the budget split by price
+  band, a target list ranked by how often each player made the best roster, and a re-run
+  in tougher and easier rooms. `--scenarios N` sets the auction count (0 skips; ~1 min at 60).
 - **Pay up for stars, steal the rest** (with `--market`): the plan to draft from. Anyone the
   market prices at $40+ costs 10% over average (`star_price`, `star_premium`); everyone
   else costs the market price. Every plan also gets the best 5-man bench $10 buys.
@@ -106,10 +114,11 @@ lost_ranking/
   loaders.py    source CSV -> standard columns (add ranking or market sources here)
   names.py      name keys for joining sources (accents, Jr./III, punctuation)
   market.py     join market prices; expected price (stars at a premium)
+  simulate.py   strategy optimizer: simulated auctions over the stars/overpay family
   valuation.py  draft simulation, replacement levels, VORP, dollars
   scarcity.py   position tiers, cliffs, position summary
   pipeline.py   load -> value -> scarcity -> output tables
-  strategy.py   core budget, sample roster plans (integer program), tier buying guide
+  strategy.py   core budget, roster plans (integer program with lineup-feasibility rows), tier guide
   report.py     assembles the HTML board from templates/
   templates/    base.html + common.js, then <page>.html/.js/.css per page (values, strategy)
   cli.py        command line

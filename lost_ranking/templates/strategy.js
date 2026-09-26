@@ -166,8 +166,57 @@ function renderStrategyStatic() {
 
   renderPositionCards();
   renderMarket();
+  renderOptimized();
   $("long-shots-plan").textContent = S.long_shots_plan;
   $("long-list").innerHTML = S.long_shots.map(p => `<span class="tp"><span class="n">${esc(p.player)}</span><span class="r">${esc(p.pos)} · ${esc(p.team || "FA")} · worth ${money(p.value_price)}</span><span class="v">$${p.price}</span></span>`).join("");
+}
+
+function renderOptimized() {
+  const O = S.optimized;
+  $("optimized").hidden = !O;
+  if (!O) return;
+  const B = O.best;
+  const pct = x => `${Math.round(x * 100)}%`;
+  const stars = B.star_targets.map(t => `${t.player} (max $${t.cap})`).join(", ");
+  $("opt-lede").textContent = B.stars
+    ? `Across ${O.scenarios} simulated auctions, the best version of the plan is: target ${B.stars} star${B.stars > 1 ? "s" : ""} — ${stars} — and chase up to ${pct(B.overpay)} over the expected price. Build the rest from the steal zone and under-$10 players on the target list. Three stars scored worst of all: the depth they cost matters more than the stars add.`
+    : `Across ${O.scenarios} simulated auctions, skipping stars scored best: build the whole core from underpriced players.`;
+  $("opt-facts").innerHTML = [
+    [B.mean.toFixed(1), "avg core score", `${B.p10.toFixed(1)}–${B.p90.toFixed(1)} in 8 of 10 auctions`],
+    [B.stars ? pct(B.stars_won / B.stars) : "–", "stars won", B.stars ? `at max bids up to +${pct(B.overpay)}` : "no stars targeted"],
+    [O.strategies.length, "strategies tested", `${O.scenarios} auctions each`],
+    [`±${pct(O.price_noise)}`, "price swings", `${pct(O.bargain_shrink)} of each bargain bid away`],
+  ].map(([v, k, sub]) => `<div class="fact"><strong>${v}</strong><span>${k}</span><small>${sub}</small></div>`).join("");
+
+  // Range chart: p10–p90 bar and mean dot per strategy, one shared scale.
+  const lo = Math.floor(Math.min(...O.strategies.map(r => r.p10)) - 0.5);
+  const hi = Math.ceil(Math.max(...O.strategies.map(r => r.p90)) + 0.5);
+  const x = v => ((v - lo) / (hi - lo)) * 100;
+  const ticks = [];
+  for (let t = Math.ceil(lo / 2) * 2; t <= hi; t += 2) ticks.push(t);
+  $("opt-chart-note").textContent = "Dot: average core score. Bar: the middle 80% of auctions (10th to 90th percentile). Higher is better.";
+  $("opt-chart").innerHTML = O.strategies.map((r, i) => `
+    <div class="rc-row${i === 0 ? " best" : ""}" role="row" title="${esc(r.name)}: average ${r.mean.toFixed(2)}, range ${r.p10.toFixed(1)}–${r.p90.toFixed(1)}${r.stars ? `, won ${r.stars_won.toFixed(1)} of ${r.stars} stars` : ""}">
+      <span class="rc-label" role="cell">${esc(r.name)}</span>
+      <span class="rc-track" role="cell">
+        ${ticks.map(t => `<i class="rc-grid" style="left:${x(t)}%"></i>`).join("")}
+        <span class="rc-bar" style="left:${x(r.p10)}%;width:${x(r.p90) - x(r.p10)}%"></span>
+        <span class="rc-dot" style="left:${x(r.mean)}%"></span>
+      </span>
+      <span class="rc-val" role="cell">${r.mean.toFixed(1)}</span>
+    </div>`).join("") + `
+    <div class="rc-row rc-axis" aria-hidden="true"><span></span><span class="rc-track">${ticks.map(t => `<b style="left:${x(t)}%">${t}</b>`).join("")}</span><span></span></div>`;
+
+  $("opt-stars").innerHTML = B.star_targets.map(t => `<tr><td>${esc(t.player)} <span class="pos-cell">${esc(t.pos)}</span></td><td class="num">${money(t.auction_value)}</td><td class="num">${money(t.market_price)}</td><td class="num">$${t.price}</td><td class="num"><b>$${t.cap}</b></td></tr>`).join("") || `<tr><td colspan="5" class="hint">No stars in this strategy.</td></tr>`;
+
+  const maxBand = Math.max(...B.band_spend.map(b => b.spend), 1);
+  const bandName = b => (b === "stars" ? `Stars ($${S.star_price}+)` : b);
+  $("opt-bands").innerHTML = B.band_spend.map(b => `<div class="bs-row"><span>${esc(bandName(b.band))}</span><span class="bs-track"><span class="bs-bar" style="width:${(b.spend / maxBand) * 100}%"></span></span><b>$${b.spend}</b></div>`).join("");
+
+  const bandOf = price => price >= S.star_price ? "Stars" : (S.price_bands || []).find(b => b.kind === "steals" && price >= b.low && price < (b.high ?? Infinity))?.label ?? "";
+  $("opt-targets").innerHTML = B.target_list.map(t => `<tr><td>${esc(t.player)} <span class="pos-cell">${esc(t.pos)}</span></td><td class="pos-cell">${esc(bandOf(t.expected_price))}</td><td class="num"><b>${pct(t.buy_rate)}</b></td><td class="num">${money(t.market_price)}</td><td class="num">${money(t.expected_price)}</td><td class="num">${money(t.auction_value)}</td><td class="num">${t.score.toFixed(2)}</td></tr>`).join("");
+
+  $("opt-rooms").innerHTML = O.rooms.map(room => `<div class="room"><h4>${esc(room.room)}</h4><p class="hint">${esc(room.note)}</p><ol>${room.top.map(r => `<li><span>${esc(r.name)}</span><b>${r.mean.toFixed(1)}</b></li>`).join("")}</ol></div>`).join("");
 }
 
 function renderMarket() {

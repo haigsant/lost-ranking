@@ -8,6 +8,7 @@ per page listed in PAGES.
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from importlib.resources import files
 from pathlib import Path
 
@@ -15,7 +16,8 @@ import pandas as pd
 
 from .pipeline import ValuationResult
 from .positions import SLOT_ELIGIBILITY
-from .strategy import build_strategy
+from .simulate import SimSettings, optimized_payload
+from .strategy import Plan, build_strategy
 
 TEMPLATES = files("lost_ranking") / "templates"
 # (page key, tab label). Each key has templates/<key>.html and <key>.js, optionally <key>.css.
@@ -56,26 +58,49 @@ def _source(players: pd.DataFrame) -> tuple[str, str | None]:
     return str(first.get("source", "")).title(), (str(updated) if pd.notna(updated) else None)
 
 
-def _strategy_payload(result: ValuationResult) -> dict:
+def _plan_record(p: Plan) -> dict:
+    return {
+        "key": p.spec.key,
+        "name": p.spec.name,
+        "summary": p.spec.summary,
+        "spend": p.spend,
+        "worth": p.worth,
+        "cost": p.spec.cost,
+        "total_score": round(p.total_score, 2),
+        "picks": _records(p.picks, PICK_FIELDS),
+        "bench": _records(p.bench, PICK_FIELDS),
+        "bench_spend": p.bench_spend,
+    }
+
+
+def _optimized_record(opt: dict | None) -> dict | None:
+    if not opt:
+        return None
+    best = opt["best"]
+    return {
+        **opt,
+        "best": {
+            **{k: v for k, v in best.items() if k != "plan"},
+            "star_targets": _records(best["star_targets"], ["player", "pos", "auction_value", "market_price", "price", "cap"]),
+            "target_list": _records(best["target_list"]),
+        },
+    }
+
+
+def _strategy_payload(result: ValuationResult, sim: SimSettings | None) -> dict:
     strategy = build_strategy(result.players, result.tiers, result.settings)
     plans = strategy.pop("plans")
+    opt = optimized_payload(result.players, result.settings, sim) if sim and sim.scenarios else None
+    if opt:
+        # The simulation's winner leads the plan list, so the planner opens on it.
+        best = opt["best"]["plan"]
+        spec = replace(best.spec, key="optimized", name=f"Optimized: {opt['best']['name']}",
+                       summary="The strategy that scored best across the simulated auctions. Targets at expected prices.")
+        plans = [Plan(spec, best.picks, best.bench), *plans]
     return {
         **strategy,
-        "plans": [
-            {
-                "key": p.spec.key,
-                "name": p.spec.name,
-                "summary": p.spec.summary,
-                "spend": p.spend,
-                "worth": p.worth,
-                "cost": p.spec.cost,
-                "total_score": round(p.total_score, 2),
-                "picks": _records(p.picks, PICK_FIELDS),
-                "bench": _records(p.bench, PICK_FIELDS),
-                "bench_spend": p.bench_spend,
-            }
-            for p in plans
-        ],
+        "optimized": _optimized_record(opt),
+        "plans": [_plan_record(p) for p in plans],
         "long_shots": _records(strategy["long_shots"], ["player", "pos", "team", "score", "price", "value_price"]),
         "price_bands": [
             {**{k: v for k, v in band.items() if k != "players"}, "players": _records(band["players"], GAP_FIELDS)}
@@ -86,7 +111,7 @@ def _strategy_payload(result: ValuationResult) -> dict:
     }
 
 
-def build_payload(result: ValuationResult) -> dict:
+def build_payload(result: ValuationResult, sim: SimSettings | None = None) -> dict:
     s = result.settings
     name, updated = _source(result.players)
     return {
@@ -106,7 +131,7 @@ def build_payload(result: ValuationResult) -> dict:
         "players": _records(result.players, PLAYER_FIELDS),
         "positions": _records(result.positions),
         "tiers": _records(result.tiers, TIER_FIELDS),
-        "strategy": _strategy_payload(result),
+        "strategy": _strategy_payload(result, sim),
     }
 
 
@@ -115,9 +140,9 @@ def _read(name: str) -> str:
     return path.read_text(encoding="utf-8") if path.is_file() else ""
 
 
-def render_board(result: ValuationResult, standalone: bool = True) -> str:
+def render_board(result: ValuationResult, standalone: bool = True, sim: SimSettings | None = None) -> str:
     # Escape "</" so player data can never close the <script> tag.
-    data = json.dumps(build_payload(result), ensure_ascii=False).replace("</", "<\\/")
+    data = json.dumps(build_payload(result, sim), ensure_ascii=False).replace("</", "<\\/")
     title = f"{_source(result.players)[0]} Auction Board".strip()
     tabs = "".join(f'<a href="#{key}" data-view="{key}">{label}</a>' for key, label in PAGES)
     scripts = "\n".join(f"<script>\n{_read(name)}</script>" for name in ["common.js", *(f"{k}.js" for k, _ in PAGES)])
@@ -133,7 +158,9 @@ def render_board(result: ValuationResult, standalone: bool = True) -> str:
     return STANDALONE_HEAD + html if standalone else html
 
 
-def write_board(result: ValuationResult, path: Path, standalone: bool = True) -> Path:
+def write_board(
+    result: ValuationResult, path: Path, standalone: bool = True, sim: SimSettings | None = None
+) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(render_board(result, standalone), encoding="utf-8")
+    path.write_text(render_board(result, standalone, sim), encoding="utf-8")
     return path

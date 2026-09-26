@@ -4,14 +4,15 @@ The games cap means only the core (about games_cap / games_per_player players
 per team) produces stats that count. So the plan is: spend almost everything on
 the core, and fill the rest of the roster with minimum-bid long shots.
 
-Roster plans are solved as a small integer program: pick one player per core
-slot (each player fits only slots their positions allow), stay within the core
-budget, and maximize total score.
+Roster plans are solved as a small integer program: pick players to maximize
+total score within the budget, with lineup-feasibility rows guaranteeing every
+slot can be filled by an eligible player; slots are assigned afterwards.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
+from itertools import combinations
 
 import numpy as np
 import pandas as pd
@@ -19,9 +20,7 @@ from scipy.optimize import Bounds, LinearConstraint, milp
 
 from .config import BENCH, LeagueSettings
 from .market import is_star
-from .positions import can_fill, parse_positions
-
-STARTER_NUDGE = 1e-3
+from .positions import SLOT_ELIGIBILITY, can_fill, parse_positions
 
 
 @dataclass(frozen=True)
@@ -132,6 +131,52 @@ def plan_cost(players: pd.DataFrame, spec: PlanSpec) -> pd.Series:
     return players[COST_COLUMNS[spec.cost]].fillna(players["auction_value"])
 
 
+def _hall_rows(slots: list[str], positions: list[frozenset[str]]) -> tuple[np.ndarray, np.ndarray]:
+    """Lineup-feasibility constraints on player picks (Hall's theorem).
+
+    For every group of position-restricted slots, at least as many picked players must
+    be eligible for one of them as there are slots in the group. UTIL and bench take
+    anyone, so with the total pick count fixed, these rows guarantee a legal lineup.
+    """
+    restricted = [s for s in slots if SLOT_ELIGIBILITY[s] is not None]
+    need: dict[frozenset[int], int] = {}
+    for r in range(1, len(restricted) + 1):
+        for group in combinations(range(len(restricted)), r):
+            members = frozenset(
+                i for i, pos in enumerate(positions) if any(can_fill(restricted[g], pos) for g in group)
+            )
+            need[members] = max(need.get(members, 0), r)
+    rows = np.zeros((len(need), len(positions)))
+    for k, members in enumerate(need):
+        rows[k, list(members)] = 1
+    return rows, np.array(list(need.values()), dtype=float)
+
+
+def assign_slots(picks: pd.DataFrame, slots: list[str]) -> list[str]:
+    """Slot for each pick: best scores into position-restricted slots first (bipartite
+    matching), then UTIL, then bench."""
+    restricted = [j for j, s in enumerate(slots) if SLOT_ELIGIBILITY[s] is not None]
+    owner = dict.fromkeys(restricted, -1)
+    positions = list(picks["positions"])
+
+    def place(i: int, seen: set[int]) -> bool:
+        for j in restricted:
+            if j in seen or not can_fill(slots[j], positions[i]):
+                continue
+            seen.add(j)
+            if owner[j] == -1 or place(owner[j], seen):
+                owner[j] = i
+                return True
+        return False
+
+    order = np.argsort(-picks["score"].to_numpy(), kind="stable")
+    leftover = [i for i in order if not place(i, set())]
+    flexible = iter(j for j, s in sorted(enumerate(slots), key=lambda js: js[1] == BENCH) if j not in owner)
+    slot_of = {i: slots[j] for j, i in owner.items() if i != -1}
+    slot_of.update({i: slots[next(flexible)] for i in leftover})
+    return [slot_of[i] for i in range(len(picks))]
+
+
 def solve_roster(
     players: pd.DataFrame,
     settings: LeagueSettings,
@@ -139,52 +184,49 @@ def solve_roster(
     slots: list[str],
     budget: int,
     position_caps: dict[str, int],
+    prices: pd.Series | None = None,
+    must_include: frozenset[str] = frozenset(),
 ) -> pd.DataFrame:
-    """Best set of players for `slots` within `budget`. players needs player, pos, score, auction_value."""
+    """Best set of players for `slots` within `budget`. players needs player, pos, score, auction_value.
+
+    prices overrides the spec's cost (e.g. simulated auction prices); must_include
+    forces players onto the roster (e.g. stars already won).
+    """
     pool = players.assign(
         positions=players["pos"].map(parse_positions),
-        price=bid_price(plan_cost(players, spec), settings),
+        price=bid_price(plan_cost(players, spec) if prices is None else prices.loc[players.index], settings),
         value_price=bid_price(players["auction_value"], settings),
     ).reset_index(drop=True)
-
-    # One binary variable per (player, slot) pair the player can fill.
-    pairs = [(i, j) for i, pos in enumerate(pool["positions"]) for j, s in enumerate(slots) if can_fill(s, pos)]
-    n = len(pairs)
+    positions = list(pool["positions"])
     score = pool["score"].to_numpy()
-    weight = score - spec.evenness * score**2
-    # Nudge the best players into starting slots instead of the bench.
-    objective = -np.array([weight[i] + STARTER_NUDGE * score[i] * (slots[j] != BENCH) for i, j in pairs])
+    price = pool["price"].to_numpy(dtype=float)
 
-    slot_rows = np.zeros((len(slots), n))
-    player_rows = np.zeros((len(pool), n))
-    for k, (i, j) in enumerate(pairs):
-        slot_rows[j, k] = 1
-        player_rows[i, k] = 1
-    price_row = np.array([[pool.at[i, "price"] for i, _ in pairs]])
+    hall, need = _hall_rows(slots, positions)
     constraints = [
-        LinearConstraint(slot_rows, 1, 1),  # every core slot filled once
-        LinearConstraint(player_rows, 0, 1),  # a player fills at most one slot
-        LinearConstraint(price_row, 0, budget),
+        LinearConstraint(np.ones((1, len(pool))), len(slots), len(slots)),  # fill every slot
+        LinearConstraint(hall, need, np.inf),  # ...with a legal lineup
+        LinearConstraint(price[None, :], 0, budget),
     ]
     if spec.star_price is not None:
-        is_star = (pool["price"] >= spec.star_price).to_numpy()
-        constraints.append(LinearConstraint([[float(is_star[i]) for i, _ in pairs]], spec.stars, spec.stars))
-    caps = list(position_caps.items())
-    if caps:
-        cap_rows = [[float(pos in pool.at[i, "positions"]) for i, _ in pairs] for pos, _ in caps]
-        constraints.append(LinearConstraint(cap_rows, 0, [cap for _, cap in caps]))
+        constraints.append(LinearConstraint((price >= spec.star_price)[None, :].astype(float), spec.stars, spec.stars))
+    if must_include:
+        forced = pool["player"].isin(must_include).to_numpy(dtype=float)
+        constraints.append(LinearConstraint(forced[None, :], forced.sum(), forced.sum()))
+    if position_caps:
+        caps = np.array([[float(pos in p) for p in positions] for pos in position_caps])
+        constraints.append(LinearConstraint(caps, 0, list(position_caps.values())))
 
     result = milp(
-        objective,
-        integrality=np.ones(n),
+        -(score - spec.evenness * score**2),  # milp minimizes
+        integrality=np.ones(len(pool)),
         bounds=Bounds(0, 1),
         constraints=constraints,
     )
     if not result.success:
         raise ValueError(f"no feasible roster for plan {spec.key!r}: {result.message}")
 
-    chosen = [pairs[k] for k in np.flatnonzero(result.x > 0.5)]
-    picks = pool.loc[[i for i, _ in chosen]].assign(slot=[slots[j] for _, j in chosen])
+    picks = pool[result.x > 0.5].reset_index(drop=True)
+    picks["slot"] = assign_slots(picks, slots)
     order = {s: k for k, s in enumerate(dict.fromkeys(slots))}
     picks = picks.sort_values(["slot", "price"], key=lambda c: c.map(order) if c.name == "slot" else -c)
     return picks.drop(columns="positions")

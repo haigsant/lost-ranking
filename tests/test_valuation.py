@@ -186,3 +186,20 @@ def test_plan_bench_fits_bench_budget():
         assert len(plan.bench) == settings.bench_spots
         assert plan.bench_spend <= settings.team_bench_budget
         assert not set(plan.bench["player"]) & set(plan.picks["player"])
+
+
+def test_optimizer_scores_strategy_family():
+    from lost_ranking.simulate import SimSettings, optimize
+
+    settings = LeagueSettings()
+    result = run(SAMPLE, settings, market_path=MARKET)
+    sim = SimSettings(scenarios=4, star_counts=(0, 1), overpay=(0.0, 0.2))
+    results = optimize(result.players, settings, sim)
+    assert [r.key for r in results] and len(results) == 3  # 0 stars once, 1 star x 2 overpay levels
+    means = [r.scores.mean() for r in results]
+    assert means == sorted(means, reverse=True)
+    for r in results:
+        assert len(r.scores) == sim.scenarios
+        assert (r.stars_won <= r.stars).all()
+        assert (r.band_spend.sum(axis=1) <= settings.core_budget).all()
+    assert optimize(run(SAMPLE, settings).players, settings, sim) is None  # needs market prices

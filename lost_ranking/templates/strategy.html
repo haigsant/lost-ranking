@@ -1,10 +1,38 @@
 <div class="view" id="view-strategy" hidden>
-  <nav class="jump" aria-label="Sections"><a href="#planner">Roster planner</a><a href="#plans">Sample plans</a><a href="#market-gaps">Steals</a><a href="#tier-guide">Where to spend</a><a href="#pos-outlook">Positions</a><a href="#long-shots">Long shots</a></nav>
+  <nav class="jump" aria-label="Sections"><a href="#optimized">Optimized plan</a><a href="#planner">Roster planner</a><a href="#plans">Sample plans</a><a href="#market-gaps">Steals</a><a href="#tier-guide">Where to spend</a><a href="#pos-outlook">Positions</a><a href="#long-shots">Long shots</a></nav>
 
   <section id="game-plan">
     <h2>Game plan</h2>
     <div class="facts" id="facts"></div>
     <ol class="rules" id="rules"></ol>
+  </section>
+
+  <section id="optimized" hidden>
+    <h2>Optimized plan</h2>
+    <p class="lede" id="opt-lede"></p>
+    <div class="facts" id="opt-facts"></div>
+    <div class="opt-grid">
+      <article class="band wide">
+        <header><h3>Every strategy, scored</h3><p id="opt-chart-note"></p></header>
+        <div class="range-chart" id="opt-chart" role="table" aria-label="Core score by strategy"></div>
+      </article>
+      <article class="band">
+        <header><h3>Star targets and max bids</h3><p>Bid up to the max. Past it, let him go: the money does more in depth.</p></header>
+        <div class="scroll"><table><thead><tr><th>Player</th><th class="num">Value</th><th class="num">Market</th><th class="num">Expect</th><th class="num">Max bid</th></tr></thead><tbody id="opt-stars"></tbody></table></div>
+      </article>
+      <article class="band">
+        <header><h3>Where the $190 goes</h3><p>Average core spend by price band in the winning strategy's auctions.</p></header>
+        <div id="opt-bands"></div>
+      </article>
+      <article class="band wide">
+        <header><h3>Target list</h3><p>How often each player made the best roster across the simulated auctions. High rates are the most reliable buys. Walk-away is our value: past it, he stops being a steal.</p></header>
+        <div class="scroll"><table><thead><tr><th>Player</th><th>Band</th><th class="num">On roster</th><th class="num">Market</th><th class="num">Expect</th><th class="num">Walk away at</th><th class="num">Score</th></tr></thead><tbody id="opt-targets"></tbody></table></div>
+      </article>
+      <article class="band wide">
+        <header><h3>Does it hold up?</h3><p>The same search in rooms that bid differently.</p></header>
+        <div class="rooms" id="opt-rooms"></div>
+      </article>
+    </div>
   </section>
 
   <section id="planner">

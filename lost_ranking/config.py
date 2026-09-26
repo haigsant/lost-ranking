@@ -42,6 +42,7 @@ class LeagueSettings:
     star_premium: float = 0.10
     # Market-price bands for finding steals: (label, low, high); high None = no cap.
     price_bands: tuple[tuple[str, int, int | None], ...] = (
+        ("Core buys", 20, 40),
         ("Steal zone", 10, 20),
         ("Under $10", 0, 10),
     )
