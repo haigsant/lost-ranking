@@ -41,6 +41,7 @@ with a Values page and a Strategy page; open it in a browser), and prints a posi
 |---|---|
 | `auction_value` | Recommended price (same as `pos_value`) |
 | `market_price`, `market_trend` | Average auction price and its trend from the market file (with `--market`) |
+| `market_listed` | False when a drafted player isn't in the market list; he's priced at the $1 minimum |
 | `market_gap` | `auction_value - market_price`: positive means the market pays less than our value |
 | `field_value` | Price vs. the best undrafted player at any position |
 | `scarcity_premium` | `auction_value - field_value`: what position scarcity adds or removes |
