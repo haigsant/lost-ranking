@@ -1,5 +1,5 @@
 <div class="view" id="view-strategy" hidden>
-  <nav class="jump" aria-label="Sections"><a href="#planner">Roster planner</a><a href="#plans">Sample plans</a><a href="#tier-guide">Where to spend</a><a href="#pos-outlook">Positions</a><a href="#long-shots">Long shots</a></nav>
+  <nav class="jump" aria-label="Sections"><a href="#planner">Roster planner</a><a href="#plans">Sample plans</a><a href="#market-gaps">Market</a><a href="#tier-guide">Where to spend</a><a href="#pos-outlook">Positions</a><a href="#long-shots">Long shots</a></nav>
 
   <section id="game-plan">
     <h2>Game plan</h2>
@@ -40,6 +40,20 @@
     <h2>Sample plans</h2>
     <p class="lede" id="plans-lede"></p>
     <div class="plan-grid" id="plan-grid"></div>
+  </section>
+
+  <section id="market-gaps" hidden>
+    <h2>Market bargains</h2>
+    <p class="lede">Core players where the market's average auction price differs most from our value. Bargains stretch your budget; overpriced players are the ones to let someone else buy.</p>
+    <div class="gap-grid">
+      <div class="scroll"><table><thead><tr><th>Bargain</th><th class="num">Value</th><th class="num">Market</th><th class="num">Gap</th></tr></thead><tbody id="bargain-body"></tbody></table></div>
+      <div class="scroll"><table><thead><tr><th>Overpriced</th><th class="num">Value</th><th class="num">Market</th><th class="num">Gap</th></tr></thead><tbody id="over-body"></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="market-missing">
+    <h2>Market prices</h2>
+    <p class="lede">No market prices loaded yet. Run the ESPN auction values export, then rebuild with <code>--market data/raw/espn_auction_values_&lt;date&gt;.csv</code>. The board then adds a market column, a bargains list, and a plan that buys at market prices.</p>
   </section>
 
   <section id="tier-guide">

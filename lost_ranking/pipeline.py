@@ -8,7 +8,8 @@ from pathlib import Path
 import pandas as pd
 
 from .config import LeagueSettings
-from .loaders import load_rankings
+from .loaders import load_market_prices, load_rankings
+from .names import name_key
 from .scarcity import add_scarcity, position_summary, position_tiers
 from .valuation import value_players
 
@@ -19,6 +20,9 @@ OUTPUT_COLUMNS = [
     "team",
     "score",
     "auction_value",
+    "market_price",
+    "market_gap",
+    "market_trend",
     "field_value",
     "scarcity_premium",
     "field_tier",
@@ -43,7 +47,7 @@ OUTPUT_COLUMNS = [
     "source_updated",
 ]
 
-TIER_PLAYER_COLUMNS = ["player", "team", "score", "auction_value", "drafted", "core", "source_url"]
+TIER_PLAYER_COLUMNS = ["player", "team", "score", "auction_value", "market_price", "drafted", "core", "source_url"]
 
 
 @dataclass
@@ -56,9 +60,24 @@ class ValuationResult:
     settings: LeagueSettings
 
 
-def run(path: str | Path, settings: LeagueSettings, source: str = "dynatyze") -> ValuationResult:
+def add_market(df: pd.DataFrame, market: pd.DataFrame) -> pd.DataFrame:
+    """Join market prices by name. market_gap > 0 means our value is above the market (a bargain)."""
+    df = df.assign(name_key=df["player"].map(name_key)).merge(market, on="name_key", how="left").drop(columns="name_key")
+    df["market_gap"] = df["auction_value"] - df["market_price"]
+    return df
+
+
+def run(
+    path: str | Path,
+    settings: LeagueSettings,
+    source: str = "dynatyze",
+    market_path: str | Path | None = None,
+    market_source: str = "espn",
+) -> ValuationResult:
     df = load_rankings(path, source)
     df, levels = value_players(df, settings)
+    if market_path:
+        df = add_market(df, load_market_prices(market_path, market_source))
     tiers = position_tiers(df, settings)
     df = add_scarcity(df, tiers)
     columns = [c for c in OUTPUT_COLUMNS if c in df.columns]

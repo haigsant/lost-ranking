@@ -34,13 +34,15 @@ button.ghost:hover, #add-btn:hover { border-color: var(--accent); color: var(--a
 .plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
 .plan { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px; display: grid; gap: 10px; align-content: start; }
 .plan header p { margin: 4px 0 0; color: var(--muted); line-height: 1.4; }
-.plan-totals { display: flex; gap: 16px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.plan-totals { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .plan-totals b { color: var(--text); }
 .plan ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
 .plan li { display: grid; grid-template-columns: 48px 1fr auto; gap: 8px; font-variant-numeric: tabular-nums; }
 .plan li .slot { color: var(--muted); font-size: 12px; }
 .plan li .v { font-family: var(--display); font-weight: 700; color: var(--accent); }
 
+.gap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+code { font-size: 12px; background: var(--chip); padding: 1px 5px; border-radius: 4px; }
 .guide td.who { white-space: normal; min-width: 280px; color: var(--muted); }
 .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
 .pill.pay { background: var(--accent-soft); color: var(--accent); }

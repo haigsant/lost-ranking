@@ -5,6 +5,10 @@ const COLUMNS = [
   { key: "team", label: "Team" },
   { key: "score", label: "Score", num: true },
   { key: "auction_value", label: "Value", num: true },
+  ...(DATA.has_market ? [
+    { key: "market_price", label: "Market $", num: true },
+    { key: "market_gap", label: "Value − market", num: true },
+  ] : []),
   { key: "field_value", label: "Field $", num: true },
   { key: "scarcity_premium", label: "Scarcity", num: true },
   { key: "field_tier", label: "Field tier", num: true },
@@ -83,6 +87,10 @@ function cell(p, c) {
     case "score": return `<td class="num">${v.toFixed(2)}</td>`;
     case "auction_value": return `<td class="num"><div class="money"><div class="track"><div class="bar" style="width:${(v / maxValue * 100).toFixed(1)}%"></div></div><b>${money(v)}</b></div></td>`;
     case "field_value": return `<td class="num">${money(v)}</td>`;
+    case "market_price": return `<td class="num">${v == null ? "–" : money(v)}</td>`;
+    case "market_gap":
+      if (v == null || Math.abs(v) < 0.5) return `<td class="num">–</td>`;
+      return `<td class="num ${v > 0 ? "up" : "down"}" title="${v > 0 ? "Market pays less than our value" : "Market pays more than our value"}">${v > 0 ? "+" : "−"}$${Math.abs(v).toFixed(0)}</td>`;
     case "scarcity_premium":
       if (!p.drafted || Math.abs(v) < 0.05) return `<td class="num">–</td>`;
       return `<td class="num ${v > 0 ? "up" : "down"}">${v > 0 ? "+" : "−"}$${Math.abs(v).toFixed(1)}</td>`;

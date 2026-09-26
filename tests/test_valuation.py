@@ -126,3 +126,32 @@ def test_strategy_plans_fit_budget_and_slots():
         assert (picks["price"] >= plan.spec.star_price).sum() == plan.spec.stars
         for pos, cap in settings.core_position_caps.items():
             assert picks["pos"].str.split("/").map(lambda p, pos=pos: pos in p).sum() <= cap
+
+
+MARKET = Path(__file__).resolve().parent / "fixtures" / "espn_auction_sample.csv"
+
+
+def test_name_key_matches_accents_and_suffixes():
+    from lost_ranking.names import name_key
+
+    assert name_key("Nikola Jokić") == name_key("Nikola Jokic")
+    assert name_key("Jaren Jackson Jr.") == name_key("Jaren Jackson")
+    assert name_key("Shai Gilgeous-Alexander") == "shaigilgeousalexander"
+
+
+def test_market_prices_join_and_market_plan():
+    settings = LeagueSettings()
+    result = run(SAMPLE, settings, market_path=MARKET)
+    p = result.players.set_index("player")
+    assert p.loc["Nikola Jokić", "market_price"] == 70.0
+    assert p.loc["Kristaps Porziņģis", "market_price"] == 2.0
+    assert p.loc["Jaren Jackson Jr.", "market_gap"] == pytest.approx(p.loc["Jaren Jackson Jr.", "auction_value"] - 30.0)
+    assert p["market_price"].notna().sum() == 5  # "Nobody Real" has no match
+
+    strategy = build_strategy(result.players, result.tiers, settings)
+    market_plan = next(pl for pl in strategy["plans"] if pl.spec.cost == "market")
+    assert market_plan.spend <= settings.core_budget
+    # Porzingis at $2 vs a much higher value is the kind of buy the market plan should find.
+    assert "Kristaps Porziņģis" in set(market_plan.picks["player"])
+    assert market_plan.worth > market_plan.spend
+    assert strategy["market"]["bargains"].iloc[0]["market_gap"] > 0

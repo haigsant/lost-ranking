@@ -27,15 +27,17 @@ STANDALONE_HEAD = (
     "<style>body{margin:0}</style>\n"
 )
 PLAYER_FIELDS = [
-    "overall_rank", "player", "pos", "team", "score", "auction_value", "field_value",
+    "overall_rank", "player", "pos", "team", "score", "auction_value", "market_price", "market_gap",
+    "market_trend", "field_value",
     "scarcity_premium", "field_tier", "scarce_pos", "pos_tier", "cliff_strength", "scarcity_note",
     "drafted", "core", "source_url",
 ]
 TIER_FIELDS = [
-    "pos", "pos_rank", "pos_tier", "player", "team", "score", "auction_value",
+    "pos", "pos_rank", "pos_tier", "player", "team", "score", "auction_value", "market_price",
     "drafted", "core", "gap_to_next", "cliff_strength", "source_url",
 ]
-PICK_FIELDS = ["slot", "player", "pos", "price", "score", "field_tier"]
+PICK_FIELDS = ["slot", "player", "pos", "price", "value_price", "score", "field_tier"]
+GAP_FIELDS = ["player", "pos", "team", "score", "auction_value", "market_price", "market_gap", "market_trend"]
 
 
 def _records(df: pd.DataFrame, fields: list[str] | None = None) -> list[dict]:
@@ -62,6 +64,8 @@ def _strategy_payload(result: ValuationResult) -> dict:
                 "name": p.spec.name,
                 "summary": p.spec.summary,
                 "spend": p.spend,
+                "worth": p.worth,
+                "cost": p.spec.cost,
                 "total_score": round(p.total_score, 2),
                 "picks": _records(p.picks, PICK_FIELDS),
             }
@@ -69,6 +73,7 @@ def _strategy_payload(result: ValuationResult) -> dict:
         ],
         "long_shots": _records(strategy["long_shots"], ["player", "pos", "team", "score", "price"]),
         "tier_guide": _records(strategy["tier_guide"]),
+        "market": {k: _records(v, GAP_FIELDS) for k, v in strategy["market"].items()} if strategy["market"] else None,
     }
 
 
@@ -88,6 +93,7 @@ def build_payload(result: ValuationResult) -> dict:
             "field_replacement": round(result.replacement["ALL"], 2),
         },
         "slot_eligibility": {k: sorted(v) if v else None for k, v in SLOT_ELIGIBILITY.items()},
+        "has_market": bool(result.players.get("market_price", pd.Series(dtype=float)).notna().any()),
         "players": _records(result.players, PLAYER_FIELDS),
         "positions": _records(result.positions),
         "tiers": _records(result.tiers, TIER_FIELDS),

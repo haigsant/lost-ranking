@@ -27,6 +27,9 @@ function assignSlots(picks) {
   return { owner, unplaced };
 }
 
+// What you'd expect to pay: the market price when loaded, otherwise our value.
+const expectedPrice = p => Math.max(L.min_bid, Math.round(p.market_price ?? p.auction_value));
+
 function pickFor(name, price) {
   const p = playerBy.get(name);
   return { player: name, pos: p.pos, score: p.score, field_tier: p.field_tier, price };
@@ -129,12 +132,14 @@ function renderStrategyStatic() {
 
   $("plan-pick").innerHTML = S.plans.map(p => `<button type="button" data-plan="${p.key}" aria-pressed="false">${esc(p.name)}</button>`).join("");
 
-  const scores = S.plans.map(p => p.total_score);
-  $("plans-lede").textContent = `Each plan spends $${S.core_budget} on the core and projects a core score between ${Math.min(...scores).toFixed(1)} and ${Math.max(...scores).toFixed(1)}. The values are fair prices, so at value no build beats another. Pick the build that fits how the room bids: the edge is paying under value, and avoiding being left on the wrong side of a cliff.`;
+  const atValue = S.plans.filter(p => p.cost === "value").map(p => p.total_score);
+  const market = S.plans.find(p => p.cost === "market");
+  $("plans-lede").textContent = `At our values, every plan spends $${S.core_budget} on the core and projects a core score between ${Math.min(...atValue).toFixed(1)} and ${Math.max(...atValue).toFixed(1)}. Prices are fair, so no build pulls far ahead; the max-score plan is the ceiling. ` +
+    (market ? `At market prices the best core scores ${market.total_score.toFixed(1)}: players the market underrates let $${market.spend} buy $${market.worth} of our value.` : `The real edge is paying under value. Load market prices to find where.`);
   $("plan-grid").innerHTML = S.plans.map(p => `
     <article class="plan">
       <header><h3>${esc(p.name)}</h3><p>${esc(p.summary)}</p></header>
-      <div class="plan-totals"><span>Spend <b>$${p.spend}</b></span><span>Core score <b>${p.total_score.toFixed(2)}</b></span></div>
+      <div class="plan-totals"><span>Spend <b>$${p.spend}</b>${p.cost === "market" ? " at market" : ""}</span><span>Core score <b>${p.total_score.toFixed(2)}</b></span>${p.worth !== p.spend ? `<span>Worth <b>$${p.worth}</b> at our value</span>` : ""}</div>
       <ul>${p.picks.map(x => `<li><span class="slot">${slotLabel(x.slot)}</span><span class="n">${esc(x.player)}</span><span class="v">$${x.price}</span></li>`).join("")}</ul>
       <button type="button" class="ghost" data-load="${p.key}">Open in planner</button>
     </article>`).join("");
@@ -147,7 +152,17 @@ function renderStrategyStatic() {
     <td class="who">${esc(t.players)}</td></tr>`).join("");
 
   renderPositionCards();
+  renderMarket();
   $("long-list").innerHTML = S.long_shots.map(p => `<span class="tp"><span class="n">${esc(p.player)}</span><span class="r">${esc(p.pos)} · ${esc(p.team || "FA")}</span><span class="v">$${p.price}</span></span>`).join("");
+}
+
+function renderMarket() {
+  $("market-gaps").hidden = !S.market;
+  $("market-missing").hidden = !!S.market;
+  if (!S.market) return;
+  const row = p => `<tr><td>${esc(p.player)} <span class="pos-cell">${esc(p.pos)}</span></td><td class="num">${money(p.auction_value)}</td><td class="num">${money(p.market_price)}</td><td class="num ${p.market_gap > 0 ? "up" : "down"}">${p.market_gap > 0 ? "+" : "−"}$${Math.abs(p.market_gap).toFixed(0)}</td></tr>`;
+  $("bargain-body").innerHTML = S.market.bargains.map(row).join("");
+  $("over-body").innerHTML = S.market.overpriced.map(row).join("");
 }
 
 function renderPositionCards() {
@@ -195,7 +210,7 @@ $("roster-body").addEventListener("change", e => {
 });
 $("add-player").addEventListener("input", e => {
   const p = playerBy.get(e.target.value);
-  if (p) $("add-price").value = Math.max(L.min_bid, Math.round(p.auction_value));
+  if (p) $("add-price").value = expectedPrice(p);
 });
 $("add-btn").addEventListener("click", () => {
   const name = $("add-player").value;
