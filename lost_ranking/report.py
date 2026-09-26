@@ -28,7 +28,7 @@ STANDALONE_HEAD = (
 )
 PLAYER_FIELDS = [
     "overall_rank", "player", "pos", "team", "score", "auction_value", "market_price", "market_gap",
-    "market_trend", "field_value",
+    "market_trend", "market_listed", "field_value",
     "scarcity_premium", "field_tier", "scarce_pos", "pos_tier", "cliff_strength", "scarcity_note",
     "drafted", "core", "source_url",
 ]
@@ -37,7 +37,7 @@ TIER_FIELDS = [
     "drafted", "core", "gap_to_next", "cliff_strength", "source_url",
 ]
 PICK_FIELDS = ["slot", "player", "pos", "price", "value_price", "score", "field_tier"]
-GAP_FIELDS = ["player", "pos", "team", "score", "auction_value", "market_price", "market_gap", "market_trend"]
+GAP_FIELDS = ["player", "pos", "team", "score", "auction_value", "market_price", "market_gap", "market_trend", "market_listed"]
 
 
 def _records(df: pd.DataFrame, fields: list[str] | None = None) -> list[dict]:

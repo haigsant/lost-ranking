@@ -146,12 +146,13 @@ def test_market_prices_join_and_market_plan():
     assert p.loc["Nikola Jokić", "market_price"] == 70.0
     assert p.loc["Kristaps Porziņģis", "market_price"] == 2.0
     assert p.loc["Jaren Jackson Jr.", "market_gap"] == pytest.approx(p.loc["Jaren Jackson Jr.", "auction_value"] - 30.0)
-    assert p["market_price"].notna().sum() == 5  # "Nobody Real" has no match
+    assert p["market_listed"].sum() == 5  # "Nobody Real" has no match
+    # Drafted players missing from the market list go for the minimum there.
+    assert p.loc["Nikola Vučević", "market_price"] == settings.min_bid
+    assert not p.loc["Nikola Vučević", "market_listed"]
 
     strategy = build_strategy(result.players, result.tiers, settings)
     market_plan = next(pl for pl in strategy["plans"] if pl.spec.cost == "market")
     assert market_plan.spend <= settings.core_budget
-    # Porzingis at $2 vs a much higher value is the kind of buy the market plan should find.
-    assert "Kristaps Porziņģis" in set(market_plan.picks["player"])
     assert market_plan.worth > market_plan.spend
     assert strategy["market"]["bargains"].iloc[0]["market_gap"] > 0

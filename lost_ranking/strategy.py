@@ -110,7 +110,8 @@ def has_market(players: pd.DataFrame) -> bool:
 
 
 def plan_cost(players: pd.DataFrame, spec: PlanSpec) -> pd.Series:
-    """Dollars to plan with. Market plans fall back to our value where no market price exists."""
+    """Dollars to plan with. Market plans fall back to our value where no market price exists
+    (only undrafted players; drafted players missing from the market list are priced at min_bid)."""
     if spec.cost == "market":
         return players["market_price"].fillna(players["auction_value"])
     return players["auction_value"]

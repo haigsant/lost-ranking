@@ -12,7 +12,7 @@ pip install -e ".[dev]"
 python -m lost_ranking data/raw/dynatyze_redraft_2026-09-25.csv
 # options: --teams 12 --budget 200 --top 50 -o output/my_values.csv
 # add market prices (ESPN average auction price CSV from the espn-auction-values skill):
-#   --market data/raw/espn_auction_values_2026-09-26.csv
+#   --market data/raw/espn_auction_values_2026-09-25.csv
 pytest
 ```
 

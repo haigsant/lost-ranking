@@ -160,7 +160,7 @@ function renderMarket() {
   $("market-gaps").hidden = !S.market;
   $("market-missing").hidden = !!S.market;
   if (!S.market) return;
-  const row = p => `<tr><td>${esc(p.player)} <span class="pos-cell">${esc(p.pos)}</span></td><td class="num">${money(p.auction_value)}</td><td class="num">${money(p.market_price)}</td><td class="num ${p.market_gap > 0 ? "up" : "down"}">${p.market_gap > 0 ? "+" : "−"}$${Math.abs(p.market_gap).toFixed(0)}</td></tr>`;
+  const row = p => `<tr><td>${esc(p.player)} <span class="pos-cell">${esc(p.pos)}</span></td><td class="num">${money(p.auction_value)}</td><td class="num">${money(p.market_price)}${p.market_listed === false ? "*" : ""}</td><td class="num ${p.market_gap > 0 ? "up" : "down"}">${p.market_gap > 0 ? "+" : "−"}$${Math.abs(p.market_gap).toFixed(0)}</td></tr>`;
   $("bargain-body").innerHTML = S.market.bargains.map(row).join("");
   $("over-body").innerHTML = S.market.overpriced.map(row).join("");
 }

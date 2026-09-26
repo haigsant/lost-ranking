@@ -23,6 +23,7 @@ OUTPUT_COLUMNS = [
     "market_price",
     "market_gap",
     "market_trend",
+    "market_listed",
     "field_value",
     "scarcity_premium",
     "field_tier",
@@ -60,9 +61,15 @@ class ValuationResult:
     settings: LeagueSettings
 
 
-def add_market(df: pd.DataFrame, market: pd.DataFrame) -> pd.DataFrame:
-    """Join market prices by name. market_gap > 0 means our value is above the market (a bargain)."""
+def add_market(df: pd.DataFrame, market: pd.DataFrame, min_bid: int) -> pd.DataFrame:
+    """Join market prices by name. market_gap > 0 means our value is above the market (a bargain).
+
+    Market lists only include players who go for at least the minimum, so a drafted
+    player missing from the list is priced at min_bid (market_listed = False).
+    """
     df = df.assign(name_key=df["player"].map(name_key)).merge(market, on="name_key", how="left").drop(columns="name_key")
+    df["market_listed"] = df["market_price"].notna()
+    df["market_price"] = df["market_price"].mask(~df["market_listed"] & df["drafted"], float(min_bid))
     df["market_gap"] = df["auction_value"] - df["market_price"]
     return df
 
@@ -77,7 +84,7 @@ def run(
     df = load_rankings(path, source)
     df, levels = value_players(df, settings)
     if market_path:
-        df = add_market(df, load_market_prices(market_path, market_source))
+        df = add_market(df, load_market_prices(market_path, market_source), settings.min_bid)
     tiers = position_tiers(df, settings)
     df = add_scarcity(df, tiers)
     columns = [c for c in OUTPUT_COLUMNS if c in df.columns]

@@ -47,9 +47,9 @@ def main(argv: list[str] | None = None) -> None:
 
     drafted = players[players["drafted"]]
     if args.market:
-        matched = players["market_price"].notna()
-        print(f"Market prices matched for {matched.sum()} of {len(players)} players "
-              f"({drafted['market_price'].notna().sum()} drafted)")
+        listed = players["market_listed"]
+        print(f"Market prices matched for {listed.sum()} of {len(players)} players; "
+              f"{(drafted['market_listed'] == False).sum()} drafted players not in the market list are priced at ${settings.min_bid}")
     print(
         f"{settings.teams} teams x ${settings.budget_per_team} = ${settings.total_budget} | "
         f"{len(drafted)} drafted of {len(players)} | "
