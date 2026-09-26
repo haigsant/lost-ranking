@@ -5,6 +5,21 @@ const $ = id => document.getElementById(id);
 const segButtons = (list, active, attr) => list.map(p => `<button type="button" data-${attr}="${p}" aria-pressed="${p === active}">${p}</button>`).join("");
 const sum = (list, key) => list.reduce((s, x) => s + x[key], 0);
 
+// Star labels (one definition, from our tiers; see scarcity.star_tiers and market.star_labels).
+const STAR_LABEL = new Map(DATA.players.filter(p => p.star_label).map(p => [p.player, p.star_label]));
+const STAR_BADGE = {
+  "Star": ["star", "★ Star"],
+  "Underpriced star": ["star-under", "★ Underpriced"],
+  "Overpriced star": ["star-over", "★ Overpriced"],
+  "Hype": ["hype", "Hype"],
+};
+const starBadge = name => {
+  const label = STAR_LABEL.get(name);
+  if (!label) return "";
+  const [cls, text] = STAR_BADGE[label];
+  return ` <span class="badge ${cls}" title="${label}">${text}</span>`;
+};
+
 (function renderHeader() {
   const L = DATA.league;
   const drafted = DATA.players.filter(p => p.drafted);

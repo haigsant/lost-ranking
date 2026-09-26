@@ -84,7 +84,7 @@ function renderPlanner() {
     const longShot = j >= S.core_size;
     const divider = j === S.core_size ? `<tr class="divider"><td colspan="6">Long shots · about $${S.bench_budget} total · their games mostly won't count</td></tr>` : "";
     const cells = p
-      ? `<td class="player">${esc(p.player)} <span class="pos-cell">${esc(p.pos)}</span></td>
+      ? `<td class="player">${esc(p.player)}${starBadge(p.player)} <span class="pos-cell">${esc(p.pos)}</span></td>
          <td class="num"><input class="price" type="number" min="1" step="1" value="${p.price}" data-player="${esc(p.player)}" aria-label="Price for ${esc(p.player)}"></td>
          <td class="num">${p.score.toFixed(2)}</td><td class="num">${p.field_tier}</td>
          <td><button type="button" class="remove" data-player="${esc(p.player)}" aria-label="Remove ${esc(p.player)}">Remove</button></td>`
@@ -117,7 +117,7 @@ function renderPlanner() {
 }
 
 function renderStrategyStatic() {
-  const pay = S.tier_guide.filter(t => t.advice === "Pay up");
+  const pay = S.tier_guide.filter(t => t.advice === "Stars" || t.advice === "Pay up");
   const deep = S.tier_guide.filter(t => t.advice.startsWith("Deep")).sort((a, b) => b.count - a.count)[0];
   const elite = pay.slice(0, 3).map(t => t.players).join(", ");
   const bigDrop = pay.reduce((m, t) => Math.max(m, t.drop_after || 0), 0);
@@ -133,11 +133,11 @@ function renderStrategyStatic() {
 
   $("rules").innerHTML = [
     `<b>Spend on the ${S.core_size} whose games count.</b> ${S.games_cap} games is about ${S.core_size} full seasons, so the other ${S.bench_spots} roster spots mostly sit. Put $${S.core_budget} into the core and keep about $${S.bench_budget} for the ${S.bench_spots} long shots.`,
-    `<b>Pay up before a major cliff.</b> ${esc(elite)} have no replacement once they're gone; the biggest drop after them is ${bigDrop.toFixed(2)} points. Tiers marked Pay up below are the ones you can't make up later.`,
+    `<b>Know who the stars are.</b> ${esc(S.stars.join(", "))}. They sit in the top field tiers, each group ending in a major cliff (the biggest is ${bigDrop.toFixed(2)} points), so nobody later replaces them. Everyone else priced like a star is hype.`,
     deep ? `<b>Be patient in deep tiers.</b> Tier ${deep.tier} has ${deep.count} near-equal players at $${Math.round(deep.low)}–$${Math.round(deep.high)}. If one goes over value, let it go; the next one is the same player on paper.` : "",
     `<b>Know your max bid.</b> The hard limit is money left minus $${L.min_bid} for every other open spot. For core buys, also hold back what's left of the $${S.bench_budget} long-shot money. The planner tracks both.`,
     S.price_bands ? `<b>Hunt steals in the $10–20 range.</b> That's where seasons are made: players the market prices there but we value far higher. Any core-quality player under $10 is a big win, for a starting slot or the bench. See Where the steals are below.` : "",
-    S.price_bands ? `<b>Expect to overpay for stars.</b> Anyone the market prices at $${S.star_price}+ usually goes ${Math.round(S.star_premium * 100)}% over average. Pay it for a player right before a major cliff; let hype-only stars go.` : "",
+    S.optimized ? `<b>Overpay only where the max bid says so.</b> ${overpayRule()}` : "",
     `<b>Balance categories yourself.</b> The score is one number, so it can't see category fit. The sample plans allow at most ${caps} core players so they don't stack big men.`,
   ].filter(Boolean).map(r => `<li>${r}</li>`).join("");
 
@@ -151,13 +151,13 @@ function renderStrategyStatic() {
     <article class="plan">
       <header><h3>${esc(p.name)}</h3><p>${esc(p.summary)}</p></header>
       <div class="plan-totals"><span>Spend <b>$${p.spend}</b>${p.cost === "market" ? " at market" : ""}</span><span>Core score <b>${p.total_score.toFixed(2)}</b></span>${p.worth !== p.spend ? `<span>Worth <b>$${p.worth}</b> at our value</span>` : ""}</div>
-      <ul>${p.picks.map(x => `<li><span class="slot">${slotLabel(x.slot)}</span><span class="n">${esc(x.player)}</span><span class="v">$${x.price}</span></li>`).join("")}</ul>
+      <ul>${p.picks.map(x => `<li><span class="slot">${slotLabel(x.slot)}</span><span class="n">${esc(x.player)}${STAR_LABEL.get(x.player) && STAR_LABEL.get(x.player) !== "Hype" ? ' <span class="star-mark" title="Star">★</span>' : ""}</span><span class="v">$${x.price}</span></li>`).join("")}</ul>
       <p class="bench-label">Long shots · $${p.bench_spend}</p>
       <ul class="bench-list">${p.bench.map(x => `<li><span class="slot">Bench</span><span class="n">${esc(x.player)}</span><span class="v">$${x.price}</span></li>`).join("")}</ul>
       <button type="button" class="ghost" data-load="${p.key}">Open in planner</button>
     </article>`).join("");
 
-  const adviceClass = a => (a === "Pay up" ? "pay" : a.startsWith("Deep") ? "wait" : "fair");
+  const adviceClass = a => (a === "Stars" || a === "Pay up" ? "pay" : a.startsWith("Deep") ? "wait" : "fair");
   $("guide-body").innerHTML = S.tier_guide.map(t => `
     <tr><td class="num">${t.tier}</td><td><span class="pill ${adviceClass(t.advice)}">${t.advice}</span></td>
     <td class="num">${t.count > 1 ? `$${Math.round(t.high)}–$${Math.round(t.low)}` : `$${Math.round(t.high)}`}</td>
@@ -171,19 +171,38 @@ function renderStrategyStatic() {
   $("long-list").innerHTML = S.long_shots.map(p => `<span class="tp"><span class="n">${esc(p.player)}</span><span class="r">${esc(p.pos)} · ${esc(p.team || "FA")} · worth ${money(p.value_price)}</span><span class="v">$${p.price}</span></span>`).join("");
 }
 
+// The call for one star or hype player: overpay, pay expected, or let go.
+function bidCall(b) {
+  if (!b.max_bid) return `<span class="pill fair">Don't buy</span>`;
+  if (b.room >= 3) return `<span class="pill wait">Overpay up to $${b.max_bid}</span>`;
+  if (b.room >= -3) return `<span class="pill pay">Pay up to $${b.max_bid}</span>`;
+  return `<span class="pill fair">Let go above $${b.max_bid}</span>`;
+}
+
+function overpayRule() {
+  const bids = S.optimized.bids;
+  const over = bids.filter(b => b.room >= 3).map(b => `${b.player} (to $${b.max_bid})`);
+  const hype = bids.filter(b => STAR_LABEL.get(b.player) === "Hype").length;
+  return `Each star and hype player has a max bid below. ${over.length ? `Worth overpaying: ${over.join(", ")}.` : "Nobody is worth much over expected price."} Every other star has a max bid under what the room will pay, so buy him only if he slips to it; the ${hype} hype players are almost never worth their price.`;
+}
+
 function renderOptimized() {
   const O = S.optimized;
   $("optimized").hidden = !O;
   if (!O) return;
   const B = O.best;
   const pct = x => `${Math.round(x * 100)}%`;
-  const stars = B.star_targets.map(t => `${t.player} (max $${t.cap})`).join(", ");
+  const stars = B.star_targets.map(t => `${t.player} (max bid $${t.cap})`).join(" and ");
+  const worst = O.strategies[O.strategies.length - 1];
+  const under = B.star_targets.filter(t => STAR_LABEL.get(t.player) === "Underpriced star").map(t => t.player);
   $("opt-lede").textContent = B.stars
-    ? `Across ${O.scenarios} simulated auctions, the best version of the plan is: target ${B.stars} star${B.stars > 1 ? "s" : ""} — ${stars} — and chase up to ${pct(B.overpay)} over the expected price. Build the rest from the steal zone and under-$10 players on the target list. Three stars scored worst of all: the depth they cost matters more than the stars add.`
+    ? `Across ${O.scenarios} simulated auctions, the best version of the plan is: target ${B.stars} star${B.stars > 1 ? "s" : ""}: ${stars}${B.cap_rule === "max_bid" ? ", bidding up to each one's max bid" : ", bidding no more than expected price"}.` +
+      (under.length ? ` ${under.join(" and ")} ${under.length > 1 ? "are" : "is"} underpriced by the market, so ${under.length > 1 ? "they" : "he"} cost${under.length > 1 ? "" : "s"} like depth and ${under.length > 1 ? "score" : "scores"} like ${under.length > 1 ? "stars" : "a star"}.` : "") +
+      ` Build the rest from the steal zone and under-$10 players on the target list. Lowest: ${worst.name} (${worst.mean.toFixed(1)}).`
     : `Across ${O.scenarios} simulated auctions, skipping stars scored best: build the whole core from underpriced players.`;
   $("opt-facts").innerHTML = [
     [B.mean.toFixed(1), "avg core score", `${B.p10.toFixed(1)}–${B.p90.toFixed(1)} in 8 of 10 auctions`],
-    [B.stars ? pct(B.stars_won / B.stars) : "–", "stars won", B.stars ? `at max bids up to +${pct(B.overpay)}` : "no stars targeted"],
+    [B.stars ? pct(B.stars_won / B.stars) : "–", "stars won", B.stars ? (B.cap_rule === "max_bid" ? "bidding to max bid" : "bidding to expected price") : "no stars targeted"],
     [O.strategies.length, "strategies tested", `${O.scenarios} auctions each`],
     [`±${pct(O.price_noise)}`, "price swings", `${pct(O.bargain_shrink)} of each bargain bid away`],
   ].map(([v, k, sub]) => `<div class="fact"><strong>${v}</strong><span>${k}</span><small>${sub}</small></div>`).join("");
@@ -207,14 +226,16 @@ function renderOptimized() {
     </div>`).join("") + `
     <div class="rc-row rc-axis" aria-hidden="true"><span></span><span class="rc-track">${ticks.map(t => `<b style="left:${x(t)}%">${t}</b>`).join("")}</span><span></span></div>`;
 
-  $("opt-stars").innerHTML = B.star_targets.map(t => `<tr><td>${esc(t.player)} <span class="pos-cell">${esc(t.pos)}</span></td><td class="num">${money(t.auction_value)}</td><td class="num">${money(t.market_price)}</td><td class="num">$${t.price}</td><td class="num"><b>$${t.cap}</b></td></tr>`).join("") || `<tr><td colspan="5" class="hint">No stars in this strategy.</td></tr>`;
+  const targeted = new Set(B.star_targets.map(t => t.player));
+  $("opt-bids-note").textContent = "Max bid: the most you can pay and still end up with a better core than the best one without him, with the room bidding like the simulation. Above it, the money does more spread across steals.";
+  $("opt-bids").innerHTML = O.bids.map(b => `<tr class="${targeted.has(b.player) ? "target" : ""}"><td>${esc(b.player)}${starBadge(b.player)}${targeted.has(b.player) ? ' <span class="badge star">Target</span>' : ""}</td><td class="num">${money(b.auction_value)}</td><td class="num">${money(b.market_price)}</td><td class="num">$${b.expected}</td><td class="num"><b>${b.max_bid ? "$" + b.max_bid : "–"}</b></td><td>${bidCall(b)}</td></tr>`).join("");
 
   const maxBand = Math.max(...B.band_spend.map(b => b.spend), 1);
-  const bandName = b => (b === "stars" ? `Stars ($${S.star_price}+)` : b);
+  const bandName = b => (b === "stars" ? "Stars" : b);
   $("opt-bands").innerHTML = B.band_spend.map(b => `<div class="bs-row"><span>${esc(bandName(b.band))}</span><span class="bs-track"><span class="bs-bar" style="width:${(b.spend / maxBand) * 100}%"></span></span><b>$${b.spend}</b></div>`).join("");
 
-  const bandOf = price => price >= S.star_price ? "Stars" : (S.price_bands || []).find(b => b.kind === "steals" && price >= b.low && price < (b.high ?? Infinity))?.label ?? "";
-  $("opt-targets").innerHTML = B.target_list.map(t => `<tr><td>${esc(t.player)} <span class="pos-cell">${esc(t.pos)}</span></td><td class="pos-cell">${esc(bandOf(t.expected_price))}</td><td class="num"><b>${pct(t.buy_rate)}</b></td><td class="num">${money(t.market_price)}</td><td class="num">${money(t.expected_price)}</td><td class="num">${money(t.auction_value)}</td><td class="num">${t.score.toFixed(2)}</td></tr>`).join("");
+  const bandOf = price => price >= S.market_star_price ? "$40+" : (S.price_bands || []).find(b => b.kind === "steals" && price >= b.low && price < (b.high ?? Infinity))?.label ?? "";
+  $("opt-targets").innerHTML = B.target_list.map(t => `<tr><td>${esc(t.player)}${starBadge(t.player)} <span class="pos-cell">${esc(t.pos)}</span></td><td class="pos-cell">${esc(bandOf(t.expected_price))}</td><td class="num"><b>${pct(t.buy_rate)}</b></td><td class="num">${money(t.market_price)}</td><td class="num">${money(t.expected_price)}</td><td class="num">${money(t.auction_value)}</td><td class="num">${t.score.toFixed(2)}</td></tr>`).join("");
 
   $("opt-rooms").innerHTML = O.rooms.map(room => `<div class="room"><h4>${esc(room.room)}</h4><p class="hint">${esc(room.note)}</p><ol>${room.top.map(r => `<li><span>${esc(r.name)}</span><b>${r.mean.toFixed(1)}</b></li>`).join("")}</ol></div>`).join("");
 }
@@ -224,20 +245,19 @@ function renderMarket() {
   $("market-missing").hidden = !!S.price_bands;
   if (!S.price_bands) return;
   const premium = Math.round(S.star_premium * 100);
-  $("bands-lede").textContent = `Our tiers say who is good. The market says what people pay, hype and scarcity included. Expect to pay ${premium}% over the average for anyone the market prices at $${S.star_price}+, and pay it when a cliff follows. Then hunt the $10–20 range, where seasons are made, and treat any core-quality player under $10 as a big win, for starters and bench alike. * means not in the market list, so he usually goes for the minimum. Market prices are ESPN-wide averages, not your league's.`;
+  $("bands-lede").textContent = `Our tiers say who is good. The market says what people pay, hype and scarcity included. Expect to pay ${premium}% over the average for anyone the market prices at $${S.market_star_price}+ (star or hype); see Who to overpay for where that's worth it. Then hunt the $10–20 range, where seasons are made, and treat any core-quality player under $10 as a big win, for starters and bench alike. * means not in the market list, so he usually goes for the minimum. Market prices are ESPN-wide averages, not your league's.`;
   const listed = p => `${money(p.market_price)}${p.market_listed === false ? "*" : ""}`;
   const gap = v => `<td class="num ${v > 0 ? "up" : "down"}">${v > 0 ? "+" : "−"}$${Math.abs(v).toFixed(0)}</td>`;
   const role = p => (p.core ? `Starter · tier ${p.field_tier}` : "Bench");
   const starRow = p => {
-    const over = p.expected_price - p.auction_value;
-    const verdict = over > 5 ? `<span class="pill fair">Overpriced by $${Math.round(over)}</span>` : over < -5 ? `<span class="pill wait">Still a buy</span>` : `<span class="pill pay">Fair: pay it</span>`;
-    return `<tr><td>${esc(p.player)} <span class="pos-cell">${esc(p.pos)}</span></td><td class="num">${money(p.auction_value)}</td><td class="num">${listed(p)}</td><td class="num"><b>${money(p.expected_price)}</b></td><td>${verdict}</td></tr>`;
+    const bid = (S.optimized?.bids || []).find(b => b.player === p.player);
+    return `<tr><td>${esc(p.player)}${starBadge(p.player)} <span class="pos-cell">${esc(p.pos)}</span></td><td class="num">${money(p.auction_value)}</td><td class="num">${listed(p)}</td><td class="num"><b>${money(p.expected_price)}</b></td><td>${bid ? bidCall(bid) : ""}</td></tr>`;
   };
-  const stealRow = p => `<tr><td>${esc(p.player)} <span class="pos-cell">${esc(p.pos)}</span></td><td class="pos-cell">${role(p)}</td><td class="num">${money(p.auction_value)}</td><td class="num">${listed(p)}</td>${gap(p.market_gap)}</tr>`;
+  const stealRow = p => `<tr><td>${esc(p.player)}${starBadge(p.player)} <span class="pos-cell">${esc(p.pos)}</span></td><td class="pos-cell">${role(p)}</td><td class="num">${money(p.auction_value)}</td><td class="num">${listed(p)}</td>${gap(p.market_gap)}</tr>`;
   const card = (title, sub, head, rows, wide = false) => `<article class="band${wide ? " wide" : ""}"><header><h3>${title}</h3><p>${sub}</p></header><div class="scroll"><table><thead><tr>${head.map(h => `<th class="${h.num ? "num" : ""}">${h.label}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div></article>`;
   const H = (label, num = false) => ({ label, num });
   $("bands").innerHTML = S.price_bands.map(b => b.kind === "stars"
-    ? card(b.label, `What top talent will really cost: market + ${premium}% when the market treats him as a star.`, [H("Player"), H("Value", 1), H("Market", 1), H("Plan to pay", 1), H("")], b.players.map(starRow).join(""), true)
+    ? card(b.label, `Stars by our tiers, plus hype: players the market prices at $${S.market_star_price}+ who aren't stars by our tiers. Expect to pay market + ${premium}% for anyone at $${S.market_star_price}+.`, [H("Player"), H("Value", 1), H("Market", 1), H("Plan to pay", 1), H("")], b.players.map(starRow).join(""), true)
     : card(b.label, b.high ? `Market price $${b.low}–$${b.high}, biggest gap to our value first.` : `Market price under $${b.high ?? b.low}`, [H("Player"), H("Role"), H("Value", 1), H("Market", 1), H("Gap", 1)], b.players.map(stealRow).join(""))
   ).join("") + (S.market ? card("Overpriced: let them go", "The market pays well over our value. Let someone else spend on hype.", [H("Player"), H("Role"), H("Value", 1), H("Market", 1), H("Gap", 1)], S.market.overpriced.slice(0, 10).map(stealRow).join("")) : "");
 }

@@ -52,6 +52,8 @@ with a Values page and a Strategy page; open it in a browser), and prints a posi
 | `field_value` | Price vs. the best undrafted player at any position |
 | `scarcity_premium` | `auction_value - field_value`: what position scarcity adds or removes |
 | `field_tier` | Tier across the whole field (all positions), using the same tier rules |
+| `star` | In a star tier: the top field tiers, each ending in a major cliff (`max_star_tiers`) |
+| `star_label` | `Star`, `Underpriced star` / `Overpriced star` (market $8+ off our value, `star_gap`), or `Hype` (market $40+ but not a star) |
 | `scarce_pos` | The player's eligible position with the worst replacement (where eligibility helps most) |
 | `pos_rank` / `pos_tier` | Rank and tier within `scarce_pos`. A new tier starts after each cliff |
 | `cliff_strength` | `major`, `minor` (tier break) or blank for the drop after this player |
@@ -84,13 +86,15 @@ All thresholds live in `LeagueSettings`.
   reprice players; it tracks money left, max bid, max core bid (keeping the long-shot
   money), and what the average open core spot buys.
 - **Optimized plan** (with `--market`): the hypothesis "pay up for a few stars, steal the
-  rest" turned into a family of strategies (0-3 stars targeted x how far over expected
-  price to chase them) and scored over simulated auctions (`simulate.py`). Clearing prices
+  rest" turned into a family of strategies (0-3 stars targeted x bid to expected price or to max bid) and scored over simulated auctions (`simulate.py`). Clearing prices
   swing around market (`price_noise`), other managers bid away part of each bargain
   (`bargain_shrink`), and a lost star's money flows back to depth. Shows every strategy's
   average and 10th-90th percentile core score, star max bids, the budget split by price
   band, a target list ranked by how often each player made the best roster, and a re-run
   in tougher and easier rooms. `--scenarios N` sets the auction count (0 skips; ~1 min at 60).
+- **Who to overpay** (with `--market`): a max bid for every star and hype player, the most
+  you can pay and still get a better core than the best one without him (room bidding like
+  the simulation). The optimizer caps targeted stars at their expected price or max bid.
 - **Pay up for stars, steal the rest** (with `--market`): the plan to draft from. Anyone the
   market prices at $40+ costs 10% over average (`star_price`, `star_premium`); everyone
   else costs the market price. Every plan also gets the best 5-man bench $10 buys.

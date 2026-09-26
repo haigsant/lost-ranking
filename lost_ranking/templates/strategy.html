@@ -16,9 +16,9 @@
         <header><h3>Every strategy, scored</h3><p id="opt-chart-note"></p></header>
         <div class="range-chart" id="opt-chart" role="table" aria-label="Core score by strategy"></div>
       </article>
-      <article class="band">
-        <header><h3>Star targets and max bids</h3><p>Bid up to the max. Past it, let him go: the money does more in depth.</p></header>
-        <div class="scroll"><table><thead><tr><th>Player</th><th class="num">Value</th><th class="num">Market</th><th class="num">Expect</th><th class="num">Max bid</th></tr></thead><tbody id="opt-stars"></tbody></table></div>
+      <article class="band wide">
+        <header><h3>Who to overpay</h3><p id="opt-bids-note"></p></header>
+        <div class="scroll"><table><thead><tr><th>Player</th><th class="num">Value</th><th class="num">Market</th><th class="num">Expect to pay</th><th class="num">Max bid</th><th>Call</th></tr></thead><tbody id="opt-bids"></tbody></table></div>
       </article>
       <article class="band">
         <header><h3>Where the $190 goes</h3><p>Average core spend by price band in the winning strategy's auctions.</p></header>
@@ -83,7 +83,7 @@
 
   <section id="tier-guide">
     <h2>Where to spend</h2>
-    <p class="lede">Field tiers inside the core pool. <b>Pay up</b>: a major cliff follows, so nobody later replaces them. <b>Deep: wait</b>: five or more near-equal players, so one will go at or under value once budgets thin out.</p>
+    <p class="lede">Field tiers inside the core pool. <b>Stars</b>: the top tiers, each ending in a major cliff, so nobody later replaces them (see Who to overpay for how much each is worth). <b>Pay up</b>: a major cliff follows a lower tier. <b>Deep: wait</b>: five or more near-equal players, so one will go at or under value once budgets thin out.</p>
     <div class="scroll">
       <table class="guide">
         <thead><tr><th class="num">Tier</th><th>Advice</th><th class="num">Price</th><th class="num">Players</th><th class="num">Drop after</th><th>Who</th></tr></thead>

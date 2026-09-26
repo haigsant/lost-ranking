@@ -19,7 +19,7 @@ import pandas as pd
 from scipy.optimize import Bounds, LinearConstraint, milp
 
 from .config import BENCH, LeagueSettings
-from .market import is_star
+from .market import is_market_star
 from .positions import SLOT_ELIGIBILITY, can_fill, parse_positions
 
 
@@ -28,9 +28,8 @@ class PlanSpec:
     key: str
     name: str
     summary: str
-    # Exactly `stars` core players priced at or above star_price (None = no rule).
-    stars: int = 0
-    star_price: int | None = None
+    # Exactly this many stars (by our tiers) in the core; None = no rule.
+    stars: int | None = None
     # Tiny tie-break that spreads leftover money evenly; at fair prices many rosters
     # score about the same, and this picks the sensible one.
     evenness: float = 0.01
@@ -41,25 +40,22 @@ class PlanSpec:
 
 PLAN_SPECS = (
     PlanSpec(
-        "superstar",
-        "One superstar + depth",
-        "Win one of the three elite players, then spread the rest evenly across the other nine core spots.",
+        "one_star",
+        "One star + depth",
+        "Win one star, then spread the rest evenly across the other nine core spots.",
         stars=1,
-        star_price=75,
     ),
     PlanSpec(
         "two_stars",
         "Two stars + depth",
-        "Skip the top three. Buy two players from the next group, then fill evenly.",
+        "Win two stars, then fill evenly.",
         stars=2,
-        star_price=40,
     ),
     PlanSpec(
         "balanced",
-        "Balanced ten",
-        "Nobody over $40. Ten solid players and no star.",
+        "No stars: balanced ten",
+        "Ten solid players and no star.",
         stars=0,
-        star_price=40,
     ),
     PlanSpec(
         "max_score",
@@ -72,7 +68,7 @@ MARKET_PLANS = (
     PlanSpec(
         "expected",
         "Pay up for stars, steal the rest",
-        "Players the market prices as stars cost 10% over their average, because that's what it takes to win them. Everyone else costs the market price, so the budget flows to players the room underrates.",
+        "Anyone the market prices at $40+ costs 10% over their average, because that's what it takes to win them. Everyone else costs the market price, so the budget flows to players the room underrates.",
         evenness=0.0,
         cost="expected",
     ),
@@ -207,8 +203,9 @@ def solve_roster(
         LinearConstraint(hall, need, np.inf),  # ...with a legal lineup
         LinearConstraint(price[None, :], 0, budget),
     ]
-    if spec.star_price is not None:
-        constraints.append(LinearConstraint((price >= spec.star_price)[None, :].astype(float), spec.stars, spec.stars))
+    if spec.stars is not None:
+        stars = pool["star"].to_numpy(dtype=float)
+        constraints.append(LinearConstraint(stars[None, :], spec.stars, spec.stars))
     if must_include:
         forced = pool["player"].isin(must_include).to_numpy(dtype=float)
         constraints.append(LinearConstraint(forced[None, :], forced.sum(), forced.sum()))
@@ -243,22 +240,63 @@ def solve_plan(players: pd.DataFrame, settings: LeagueSettings, spec: PlanSpec) 
     bench = pd.DataFrame(columns=core.columns)
     if settings.bench_spots:
         candidates = players[players["drafted"] & ~players["player"].isin(core["player"])]
-        bench_spec = replace(spec, stars=0, star_price=None, evenness=0.0)
+        bench_spec = replace(spec, stars=None, evenness=0.0)
         bench = solve_roster(
             candidates, settings, bench_spec, [BENCH] * settings.bench_spots, settings.team_bench_budget, {}
         )
     return Plan(spec, core, bench)
 
 
+def max_bids(
+    players: pd.DataFrame, settings: LeagueSettings, names: list[str], prices: pd.Series | None = None
+) -> pd.DataFrame:
+    """For each player: the most you can pay and still beat the best core without him.
+
+    Everyone else costs `prices` (default: what we expect to pay, or our value without
+    market prices). Above the max bid, the money does more spread across others.
+    """
+    cost = "expected" if has_market(players) else "value"
+    spec = PlanSpec("max-bid", "", "", evenness=0.0, cost=cost)
+    core_pool = players[players["core"] | players["player"].isin(names)]
+    base_prices = plan_cost(core_pool, spec) if prices is None else prices.loc[core_pool.index]
+    slots = core_slots(settings)
+
+    def best(pool: pd.DataFrame, prices: pd.Series, forced: frozenset[str] = frozenset()) -> float:
+        try:
+            roster = solve_roster(pool, settings, spec, slots, settings.core_budget,
+                                  settings.core_position_caps, prices=prices, must_include=forced)
+        except ValueError:
+            return float("-inf")
+        return float(roster["score"].sum())
+
+    rows = []
+    for name in names:
+        without = best(core_pool[core_pool["player"] != name], base_prices)
+        idx = core_pool.index[core_pool["player"] == name][0]
+        lo, hi = settings.min_bid, settings.core_budget - settings.min_bid * (settings.core_size - 1)
+        if best(core_pool, base_prices.mask(base_prices.index == idx, lo), frozenset([name])) < without:
+            lo = 0  # not worth rostering even at the minimum
+        else:
+            while lo < hi:  # highest price that still beats the core without him
+                mid = (lo + hi + 1) // 2
+                with_him = best(core_pool, base_prices.mask(base_prices.index == idx, mid), frozenset([name]))
+                lo, hi = (mid, hi) if with_him >= without else (lo, mid - 1)
+        rows.append({"player": name, "max_bid": int(lo), "expected": int(bid_price(base_prices[[idx]], settings).iloc[0])})
+    out = pd.DataFrame(rows)
+    out["room"] = out["max_bid"] - out["expected"]  # > 0: worth overpaying by up to this much
+    return out
+
+
 def price_bands(players: pd.DataFrame, settings: LeagueSettings, n: int = 10) -> list[dict]:
     """Where to hunt: stars and what they'll cost, then the best buys in each market-price band."""
     drafted = players[players["drafted"] & players["market_price"].notna()]
-    stars = drafted[is_star(drafted, settings)].sort_values("auction_value", ascending=False)
-    bands = [{"label": f"Stars (${settings.star_price}+)", "kind": "stars", "players": stars}]
+    headline = drafted["star"] | (drafted["star_label"] == "Hype")
+    stars = drafted[headline].sort_values(["star", "auction_value"], ascending=False)
+    bands = [{"label": "Stars and hype", "kind": "stars", "players": stars}]
     for label, low, high in settings.price_bands:
         in_band = drafted[(drafted["market_price"] >= low) & (drafted["market_price"] < (high or float("inf")))]
         bands.append({"label": label, "kind": "steals", "low": low, "high": high,
-                      "players": in_band[~is_star(in_band, settings)].nlargest(n, "market_gap")})
+                      "players": in_band[~headline.loc[in_band.index]].nlargest(n, "market_gap")})
     return bands
 
 
@@ -279,7 +317,7 @@ def tier_guide(players: pd.DataFrame, tiers: pd.DataFrame) -> pd.DataFrame:
                 "low": round(float(g["auction_value"].min()), 1),
                 "drop_after": round(float(last["field_gap_to_next"]), 2) if pd.notna(last["field_gap_to_next"]) else None,
                 "cliff": last["field_cliff_strength"] or "",
-                "advice": _tier_advice(len(g), last["field_cliff_strength"]),
+                "advice": "Stars" if g["star"].all() else _tier_advice(len(g), last["field_cliff_strength"]),
             }
         )
     return pd.DataFrame(rows)
@@ -295,8 +333,9 @@ def _tier_advice(count: int, cliff: str) -> str:
 
 
 def market_gaps(players: pd.DataFrame, n: int = 12) -> dict[str, pd.DataFrame]:
-    """Core players the market prices furthest below (bargains) and above (overpriced) our value."""
-    priced = players[players["core"] & players["market_price"].notna()]
+    """Non-star core players the market prices furthest below (bargains) and above
+    (overpriced) our value. Stars and hype have their own table."""
+    priced = players[players["core"] & players["market_price"].notna() & (players["star_label"] == "")]
     return {
         "bargains": priced.nlargest(n, "market_gap"),
         "overpriced": priced.nsmallest(n, "market_gap"),
@@ -321,7 +360,8 @@ def build_strategy(players: pd.DataFrame, tiers: pd.DataFrame, settings: LeagueS
         "plans": plans,
         "long_shots": plans[0].bench,
         "long_shots_plan": plans[0].spec.name,
-        "star_price": settings.star_price,
+        "market_star_price": settings.market_star_price,
+        "stars": players.loc[players["star"], "player"].tolist(),
         "star_premium": settings.star_premium,
         "price_bands": price_bands(players, settings) if market else None,
         "tier_guide": tier_guide(players, tiers),

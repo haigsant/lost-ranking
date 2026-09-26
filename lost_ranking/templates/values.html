@@ -3,10 +3,12 @@
 
   <section id="players">
     <h2>Player values</h2>
+    <p class="lede">Stars are the players in the top field tiers, each group ending in a major cliff, so nobody later in the draft replaces them. <span class="badge star">★ Star</span> market pays about our value. <span class="badge star-under">★ Underpriced</span> market pays at least $8 less: the best buys on the board. <span class="badge star-over">★ Overpriced</span> market pays at least $8 more. <span class="badge hype">Hype</span> priced like a star ($40+) but not one by our tiers.</p>
     <div class="controls">
       <input type="search" id="q" placeholder="Search player or team" aria-label="Search player or team">
       <div class="seg" id="posf" role="group" aria-label="Filter by position"></div>
       <label class="toggle"><input type="checkbox" id="drafted-only"> Drafted only</label>
+      <label class="toggle"><input type="checkbox" id="stars-only"> Stars and hype only</label>
       <span class="count" id="count"></span>
     </div>
     <div class="legend"><span><i class="major"></i>Major cliff</span><span><i class="minor"></i>Tier break</span><span><i class="dimk"></i>Not drafted</span><span>Lines show field tiers under ALL and that position's tiers when one is picked</span></div>

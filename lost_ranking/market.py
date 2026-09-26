@@ -26,14 +26,36 @@ def add_market(df: pd.DataFrame, market: pd.DataFrame, settings: LeagueSettings)
     return df
 
 
-def is_star(df: pd.DataFrame, settings: LeagueSettings) -> pd.Series:
-    """Top talent by either measure: our value or the market price at or above star_price."""
-    return (df["auction_value"] >= settings.star_price) | (df["market_price"] >= settings.star_price)
+def is_market_star(df: pd.DataFrame, settings: LeagueSettings) -> pd.Series:
+    """Priced like a star by the market (its bidding, not our tiers)."""
+    return df["market_price"].fillna(df["auction_value"]) >= settings.market_star_price
 
 
-def expected_price(df: pd.DataFrame, settings: LeagueSettings) -> pd.Series:
-    """What to plan on paying: the market price, plus star_premium for players the market
-    prices as stars (bidding wars push them past their average). A player we rate as a star
-    but the market doesn't (e.g. value $46, market $26) is planned at market."""
+STAR_LABELS = ("Star", "Underpriced star", "Overpriced star", "Hype")
+
+
+def star_labels(df: pd.DataFrame, settings: LeagueSettings) -> pd.Series:
+    """Star (by our tiers) vs the market, or "Hype" for a non-star the market prices as one.
+
+    Without market prices, stars are just "Star".
+    """
+    labels = pd.Series("", index=df.index).mask(df["star"], "Star")
+    if "market_price" not in df.columns:
+        return labels
+    gap = df["auction_value"] - df["market_price"]
+    labels = labels.mask(df["star"] & (gap >= settings.star_gap), "Underpriced star")
+    labels = labels.mask(df["star"] & (gap <= -settings.star_gap), "Overpriced star")
+    return labels.mask(~df["star"] & df["drafted"] & is_market_star(df, settings), "Hype")
+
+
+def expected_price(df: pd.DataFrame, settings: LeagueSettings, bargain_shrink: float = 0.0) -> pd.Series:
+    """What to plan on paying: the market price, plus star_premium for anyone the market
+    prices at market_star_price or more (bidding wars push them past their average).
+    A star the market underprices (e.g. value $44, market $26) is planned at market.
+
+    bargain_shrink > 0 also assumes the room bids away that share of every bargain
+    (the gap between our value and a lower market price).
+    """
     market = df["market_price"].fillna(df["auction_value"])
-    return market.where(market < settings.star_price, market * (1 + settings.star_premium))
+    price = market + bargain_shrink * (df["auction_value"] - market).clip(lower=0)
+    return price.where(~is_market_star(df, settings), price * (1 + settings.star_premium))

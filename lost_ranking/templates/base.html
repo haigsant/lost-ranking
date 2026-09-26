@@ -123,6 +123,13 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .tabs a:hover { color: var(--text); }
 .view { display: grid; gap: 32px; }
 [hidden] { display: none !important; }
+.badge { display: inline-block; padding: 0 6px; border-radius: 999px; font: 600 11px var(--body); line-height: 17px; vertical-align: 1px; white-space: nowrap; }
+.badge.star { background: var(--accent-soft); color: var(--accent); }
+.badge.star-under { background: color-mix(in srgb, var(--good) 16%, transparent); color: var(--good); }
+.badge.star-over { background: var(--chip); color: var(--bad); }
+.star-mark { color: var(--accent); font-size: 12px; }
+.hype-mark { color: var(--muted); font-size: 11px; text-decoration: line-through; }
+.badge.hype { background: var(--chip); color: var(--muted); text-decoration: line-through; }
 __STYLES__
 </style>
 

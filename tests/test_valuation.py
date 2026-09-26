@@ -123,7 +123,7 @@ def test_strategy_plans_fit_budget_and_slots():
         assert picks["player"].is_unique
         assert plan.spend <= settings.core_budget
         assert sorted(picks["slot"]) == sorted(strategy["core_slots"])
-        assert (picks["price"] >= plan.spec.star_price).sum() == plan.spec.stars
+        assert plan.spec.stars is None or picks["star"].sum() == plan.spec.stars
         for pos, cap in settings.core_position_caps.items():
             assert picks["pos"].str.split("/").map(lambda p, pos=pos: pos in p).sum() <= cap
 
@@ -161,7 +161,7 @@ def test_market_prices_join_and_market_plan():
 def test_expected_price_premium_only_for_market_stars():
     from lost_ranking.market import expected_price
 
-    settings = LeagueSettings()  # star_price 40, premium 10%
+    settings = LeagueSettings()  # market_star_price 40, premium 10%
     df = pd.DataFrame({"auction_value": [80.0, 46.0, 12.0, 20.0], "market_price": [70.0, 26.0, 8.0, None]})
     assert expected_price(df, settings).tolist() == pytest.approx([77.0, 26.0, 8.0, 20.0])
 
@@ -193,9 +193,9 @@ def test_optimizer_scores_strategy_family():
 
     settings = LeagueSettings()
     result = run(SAMPLE, settings, market_path=MARKET)
-    sim = SimSettings(scenarios=4, star_counts=(0, 1), overpay=(0.0, 0.2))
+    sim = SimSettings(scenarios=4, star_counts=(0, 1))
     results = optimize(result.players, settings, sim)
-    assert [r.key for r in results] and len(results) == 3  # 0 stars once, 1 star x 2 overpay levels
+    assert [r.key for r in results] and len(results) == 3  # 0 stars once, 1 star x 2 cap rules
     means = [r.scores.mean() for r in results]
     assert means == sorted(means, reverse=True)
     for r in results:
@@ -203,3 +203,26 @@ def test_optimizer_scores_strategy_family():
         assert (r.stars_won <= r.stars).all()
         assert (r.band_spend.sum(axis=1) <= settings.core_budget).all()
     assert optimize(run(SAMPLE, settings).players, settings, sim) is None  # needs market prices
+
+
+def test_stars_come_from_tiers_and_labels_from_market():
+    settings = LeagueSettings()
+    p = run(SAMPLE, settings, market_path=Path(__file__).resolve().parents[1] / "data" / "raw" / "espn_auction_values_2026-09-25.csv").players
+    stars = p[p["star"]]
+    assert set(stars["field_tier"]) == set(range(1, stars["field_tier"].max() + 1))  # contiguous from the top
+    assert {"Nikola Jokić", "Shai Gilgeous-Alexander", "Victor Wembanyama"} <= set(stars["player"])
+    label = p.set_index("player")["star_label"]
+    assert label["Kawhi Leonard"] == "Underpriced star"  # value $44, market $26
+    assert label["Luka Dončić"] == "Overpriced star"  # value $42, market $67
+    assert label["Cade Cunningham"] == "Hype"  # market $54, not a star by our tiers
+    assert label["Trey Murphy III"] == ""
+
+
+def test_max_bids_rank_underpriced_stars_above_hype():
+    from lost_ranking.strategy import max_bids
+
+    settings = LeagueSettings()
+    p = run(SAMPLE, settings, market_path=Path(__file__).resolve().parents[1] / "data" / "raw" / "espn_auction_values_2026-09-25.csv").players
+    bids = max_bids(p, settings, ["Kawhi Leonard", "Giannis Antetokounmpo"]).set_index("player")
+    assert bids.loc["Kawhi Leonard", "room"] > 0  # worth more than the market price
+    assert bids.loc["Giannis Antetokounmpo", "room"] < 0

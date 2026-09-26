@@ -31,17 +31,17 @@ STANDALONE_HEAD = (
 PLAYER_FIELDS = [
     "overall_rank", "player", "pos", "team", "score", "auction_value", "market_price", "market_gap",
     "market_trend", "market_listed", "expected_price", "field_value",
-    "scarcity_premium", "field_tier", "scarce_pos", "pos_tier", "cliff_strength", "scarcity_note",
+    "scarcity_premium", "field_tier", "star", "star_label", "scarce_pos", "pos_tier", "cliff_strength", "scarcity_note",
     "drafted", "core", "source_url",
 ]
 TIER_FIELDS = [
     "pos", "pos_rank", "pos_tier", "player", "team", "score", "auction_value", "market_price",
-    "drafted", "core", "gap_to_next", "cliff_strength", "source_url",
+    "drafted", "core", "star", "star_label", "gap_to_next", "cliff_strength", "source_url",
 ]
-PICK_FIELDS = ["slot", "player", "pos", "price", "value_price", "score", "field_tier"]
+PICK_FIELDS = ["slot", "player", "pos", "price", "value_price", "score", "field_tier", "star_label"]
 GAP_FIELDS = [
     "player", "pos", "team", "score", "auction_value", "market_price", "expected_price",
-    "market_gap", "market_trend", "market_listed", "core", "field_tier",
+    "market_gap", "market_trend", "market_listed", "core", "field_tier", "star_label",
 ]
 
 
@@ -84,6 +84,7 @@ def _optimized_record(opt: dict | None) -> dict | None:
             "star_targets": _records(best["star_targets"], ["player", "pos", "auction_value", "market_price", "price", "cap"]),
             "target_list": _records(best["target_list"]),
         },
+        "bids": _records(opt["bids"]),
     }
 
 

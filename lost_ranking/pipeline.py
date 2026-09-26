@@ -9,7 +9,7 @@ import pandas as pd
 
 from .config import LeagueSettings
 from .loaders import load_market_prices, load_rankings
-from .market import add_market
+from .market import add_market, star_labels
 from .scarcity import add_scarcity, position_summary, position_tiers
 from .valuation import value_players
 
@@ -28,6 +28,8 @@ OUTPUT_COLUMNS = [
     "field_value",
     "scarcity_premium",
     "field_tier",
+    "star",
+    "star_label",
     "scarce_pos",
     "pos_rank",
     "pos_tier",
@@ -50,7 +52,9 @@ OUTPUT_COLUMNS = [
     "source_updated",
 ]
 
-TIER_PLAYER_COLUMNS = ["player", "team", "score", "auction_value", "market_price", "drafted", "core", "source_url"]
+TIER_PLAYER_COLUMNS = [
+    "player", "team", "score", "auction_value", "market_price", "drafted", "core", "star", "star_label", "source_url",
+]
 
 
 @dataclass
@@ -77,7 +81,8 @@ def run(
     if market_path:
         df = add_market(df, load_market_prices(market_path, market_source), settings)
     tiers = position_tiers(df, settings)
-    df = add_scarcity(df, tiers)
+    df = add_scarcity(df, tiers, settings)
+    df["star_label"] = star_labels(df, settings)
     columns = [c for c in OUTPUT_COLUMNS if c in df.columns]
     return ValuationResult(
         players=df[columns],

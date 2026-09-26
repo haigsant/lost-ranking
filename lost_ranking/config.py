@@ -36,9 +36,16 @@ class LeagueSettings:
     # number, so this keeps plans from stacking big men (rebounds and blocks up,
     # FT% and 3PM down).
     core_position_caps: dict[str, int] = field(default_factory=lambda: {"C": 3})
-    # Market behavior: players the market prices at star_price or more rarely go for
-    # their average; plan on star_premium above it. Everyone else is planned at market.
-    star_price: int = 40
+    # Stars (by our tiers): every field tier from the top that ends in a major cliff,
+    # up to max_star_tiers. These are the players nobody later replaces.
+    max_star_tiers: int = 6
+    # Star labels vs the market: a star whose market price is at least star_gap under
+    # our value is "Underpriced", at least star_gap over is "Overpriced".
+    star_gap: int = 8
+    # Market behavior: players the market prices at market_star_price or more rarely go
+    # for their average; plan on star_premium above it. It's a price effect, not star
+    # status: a non-star priced there is "Hype".
+    market_star_price: int = 40
     star_premium: float = 0.10
     # Market-price bands for finding steals: (label, low, high); high None = no cap.
     price_bands: tuple[tuple[str, int, int | None], ...] = (

@@ -109,10 +109,24 @@ def _note(row: pd.Series) -> str:
 TIER_COLUMNS = ["pos_rank", "pos_tier", "gap_to_next", "next_player", "cliff_after", "cliff_strength", "left_in_tier"]
 
 
-def add_scarcity(df: pd.DataFrame, tiers: pd.DataFrame) -> pd.DataFrame:
-    """Attach overall tier, tier info at the scarcest position, and a readable note."""
+def star_tiers(tiers: pd.DataFrame, max_tiers: int) -> set[int]:
+    """Field tiers from the top that each end in a major cliff (stop at the first that
+    doesn't, or at max_tiers). Players in them have no replacement later in the draft."""
+    field = tiers[tiers["pos"] == FIELD].sort_values("pos_rank")
+    ends = field.groupby("pos_tier")["cliff_strength"].last()
+    stars = set()
+    for tier, cliff in ends.items():
+        if cliff != "major" or tier > max_tiers:
+            break
+        stars.add(int(tier))
+    return stars
+
+
+def add_scarcity(df: pd.DataFrame, tiers: pd.DataFrame, settings: LeagueSettings) -> pd.DataFrame:
+    """Attach overall tier, star flag, tier info at the scarcest position, and a readable note."""
     field = tiers[tiers["pos"] == FIELD].set_index("player_idx")
     df = df.join(field[["pos_tier"]].rename(columns={"pos_tier": "field_tier"}))
+    df["star"] = df["field_tier"].isin(star_tiers(tiers, settings.max_star_tiers)) & df["drafted"]
     at_scarce = tiers.merge(
         df[["scarce_pos"]].rename_axis("player_idx").reset_index(),
         left_on=["player_idx", "pos"],
