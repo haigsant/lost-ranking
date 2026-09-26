@@ -21,6 +21,7 @@ OUTPUT_COLUMNS = [
     "auction_value",
     "field_value",
     "scarcity_premium",
+    "field_tier",
     "scarce_pos",
     "pos_rank",
     "pos_tier",

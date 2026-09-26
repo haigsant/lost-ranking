@@ -17,6 +17,7 @@ import pandas as pd
 from .config import LeagueSettings
 from .positions import BASE_POSITIONS
 
+FIELD = "ALL"  # tier group covering every player, regardless of position
 MAD_TO_STD = 1.4826  # scales median absolute deviation to a normal-dist std
 EPS = 1e-9  # float tolerance for threshold comparisons
 
@@ -70,13 +71,15 @@ def classify_cliffs(gaps: pd.Series, in_pool: pd.Series, settings: LeagueSetting
 
 
 def position_tiers(df: pd.DataFrame, settings: LeagueSettings) -> pd.DataFrame:
-    """Long table: one row per (player, eligible base position) with rank/gap/tier.
+    """Long table: one row per (player, group) with rank/gap/tier in that group.
 
+    Groups are the whole field (pos == "ALL") and each eligible base position.
     Expects df sorted by score descending with 'positions' and 'drafted' columns.
     """
     frames = []
-    for pos in BASE_POSITIONS:
-        at_pos = df.loc[df["positions"].map(lambda p, pos=pos: pos in p), ["player", "score", "drafted"]]
+    for pos in (FIELD, *BASE_POSITIONS):
+        in_group = df["positions"].map(lambda p, pos=pos: pos == FIELD or pos in p)
+        at_pos = df.loc[in_group, ["player", "score", "drafted"]]
         if at_pos.empty:
             continue
         t = at_pos.assign(pos=pos, pos_rank=range(1, len(at_pos) + 1))
@@ -107,7 +110,9 @@ TIER_COLUMNS = ["pos_rank", "pos_tier", "gap_to_next", "next_player", "cliff_aft
 
 
 def add_scarcity(df: pd.DataFrame, tiers: pd.DataFrame) -> pd.DataFrame:
-    """Attach each player's tier info at their scarcest position + a readable note."""
+    """Attach overall tier, tier info at the scarcest position, and a readable note."""
+    field = tiers[tiers["pos"] == FIELD].set_index("player_idx")
+    df = df.join(field[["pos_tier"]].rename(columns={"pos_tier": "field_tier"}))
     at_scarce = tiers.merge(
         df[["scarce_pos"]].rename_axis("player_idx").reset_index(),
         left_on=["player_idx", "pos"],

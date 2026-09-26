@@ -19,7 +19,7 @@ STANDALONE_HEAD = (
 )
 PLAYER_FIELDS = [
     "overall_rank", "player", "pos", "team", "score", "auction_value", "field_value",
-    "scarcity_premium", "scarce_pos", "pos_tier", "cliff_strength", "scarcity_note",
+    "scarcity_premium", "field_tier", "scarce_pos", "pos_tier", "cliff_strength", "scarcity_note",
     "drafted", "source_url",
 ]
 TIER_FIELDS = [

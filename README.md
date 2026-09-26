@@ -35,6 +35,7 @@ with position tiers; open it in a browser), and prints a position scarcity summa
 | `auction_value` | Recommended price (same as `pos_value`) |
 | `field_value` | Price vs. the best undrafted player at any position |
 | `scarcity_premium` | `auction_value - field_value`: what position scarcity adds or removes |
+| `field_tier` | Tier across the whole field (all positions), using the same tier rules |
 | `scarce_pos` | The player's eligible position with the worst replacement (where eligibility helps most) |
 | `pos_rank` / `pos_tier` | Rank and tier within `scarce_pos`. A new tier starts after each cliff |
 | `cliff_strength` | `major`, `minor` (tier break) or blank for the drop after this player |
