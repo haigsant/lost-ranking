@@ -1,0 +1,22 @@
+[project]
+name = "lost-ranking"
+version = "0.1.0"
+description = "Fantasy basketball auction valuation from ranking sources"
+requires-python = ">=3.10"
+dependencies = ["pandas>=2.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.scripts]
+lost-ranking = "lost_ranking.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["lost_ranking"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
