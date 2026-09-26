@@ -86,12 +86,17 @@ All thresholds live in `LeagueSettings`.
   reprice players; it tracks money left, max bid, max core bid (keeping the long-shot
   money), and what the average open core spot buys.
 - **Optimized plan** (with `--market`): the hypothesis "pay up for a few stars, steal the
-  rest" turned into a family of strategies (0-3 stars targeted x bid to expected price or to max bid) and scored over simulated auctions (`simulate.py`). Clearing prices
+  rest" turned into a family of strategies in two stages: (1) 0-3 stars targeted (never overpriced ones) x star cap
+  (expected price, break-even max bid, or market +20%), (2) for the best of those, the ceiling on
+  everyone else (market +0/10/20/30%, or up to our value) and scored over simulated auctions (`simulate.py`). Clearing prices
   swing around market (`price_noise`), other managers bid away part of each bargain
   (`bargain_shrink`), and a lost star's money flows back to depth. Shows every strategy's
   average and 10th-90th percentile core score, star max bids, the budget split by price
   band, a target list ranked by how often each player made the best roster, and a re-run
   in tougher and easier rooms. `--scenarios N` sets the auction count (0 skips; ~1 min at 60).
+- **Draft plan with price ranges:** the winning roster with target (usual price), stretch
+  (market +20%) and walk-away (our value, or the star cap) per player, two backups per slot at
+  about the same money, and what stretching costs against the budget.
 - **Who to overpay** (with `--market`): a max bid for every star and hype player, the most
   you can pay and still get a better core than the best one without him (room bidding like
   the simulation). The optimizer caps targeted stars at their expected price or max bid.

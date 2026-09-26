@@ -193,9 +193,10 @@ def test_optimizer_scores_strategy_family():
 
     settings = LeagueSettings()
     result = run(SAMPLE, settings, market_path=MARKET)
-    sim = SimSettings(scenarios=4, star_counts=(0, 1))
+    sim = SimSettings(scenarios=4, star_counts=(0, 1), depth_stretch=(0.2, None))
     results = optimize(result.players, settings, sim)
-    assert [r.key for r in results] and len(results) == 3  # 0 stars once, 1 star x 2 cap rules
+    # Stage 1: 0 stars once + 1 star x 3 cap rules; stage 2: the best of those with a +20% ceiling.
+    assert len(results) == 5 and len({r.key for r in results}) == 5
     means = [r.scores.mean() for r in results]
     assert means == sorted(means, reverse=True)
     for r in results:

@@ -83,6 +83,7 @@ def _optimized_record(opt: dict | None) -> dict | None:
             **{k: v for k, v in best.items() if k != "plan"},
             "star_targets": _records(best["star_targets"], ["player", "pos", "auction_value", "market_price", "price", "cap"]),
             "target_list": _records(best["target_list"]),
+            "range_plan": _records(best["range_plan"]),
         },
         "bids": _records(opt["bids"]),
     }

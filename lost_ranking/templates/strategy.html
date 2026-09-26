@@ -13,12 +13,17 @@
     <div class="facts" id="opt-facts"></div>
     <div class="opt-grid">
       <article class="band wide">
+        <header><h3>Your draft plan, with price ranges</h3><p id="range-note"></p></header>
+        <div class="scroll"><table class="range-plan"><thead><tr><th>Slot</th><th>Player</th><th class="num">Target</th><th class="num">Stretch</th><th class="num">Walk away</th><th>Price range</th><th>If he's gone or too pricey</th></tr></thead><tbody id="range-body"></tbody></table></div>
+        <p class="hint" id="range-totals"></p>
+      </article>
+      <article class="band wide">
         <header><h3>Every strategy, scored</h3><p id="opt-chart-note"></p></header>
         <div class="range-chart" id="opt-chart" role="table" aria-label="Core score by strategy"></div>
       </article>
       <article class="band wide">
         <header><h3>Who to overpay</h3><p id="opt-bids-note"></p></header>
-        <div class="scroll"><table><thead><tr><th>Player</th><th class="num">Value</th><th class="num">Market</th><th class="num">Expect to pay</th><th class="num">Max bid</th><th>Call</th></tr></thead><tbody id="opt-bids"></tbody></table></div>
+        <div class="scroll"><table><thead><tr><th>Player</th><th class="num">Value</th><th class="num">Market</th><th class="num">Expect to pay</th><th class="num">Market +20%</th><th class="num">Break-even</th><th>Call</th></tr></thead><tbody id="opt-bids"></tbody></table></div>
       </article>
       <article class="band">
         <header><h3>Where the $190 goes</h3><p>Average core spend by price band in the winning strategy's auctions.</p></header>

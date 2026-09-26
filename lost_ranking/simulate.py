@@ -25,7 +25,8 @@ import pandas as pd
 
 from .config import LeagueSettings
 from .market import expected_price
-from .strategy import PlanSpec, Plan, core_slots, has_market, max_bids, solve_plan, solve_roster
+from .positions import can_fill, parse_positions
+from .strategy import PlanSpec, Plan, bid_price, core_slots, has_market, max_bids, solve_plan, solve_roster
 
 
 @dataclass(frozen=True)
@@ -36,9 +37,12 @@ class SimSettings:
     # Share of the gap between our value and the market that other managers bid away.
     bargain_shrink: float = 0.25
     star_counts: tuple[int, ...] = (0, 1, 2, 3)
-    # How high to bid on targeted stars: their expected price, or their max bid
-    # (the break-even price vs. the best core without them; see strategy.max_bids).
-    cap_rules: tuple[str, ...] = ("expected", "max_bid")
+    # How high to bid on targeted stars: their expected price, their max bid (break-even
+    # vs. the best core without them; see strategy.max_bids), or market + star_stretch.
+    cap_rules: tuple[str, ...] = ("expected", "max_bid", "stretch")
+    star_stretch: float = 0.20
+    # Ceiling for everyone else: market + this share, never above our value (None = our value).
+    depth_stretch: tuple[float | None, ...] = (0.0, 0.1, 0.2, 0.3, None)
     seed: int = 7
 
 
@@ -46,6 +50,7 @@ class SimSettings:
 class StrategyResult:
     stars: int
     cap_rule: str
+    depth_stretch: float | None
     targets: Plan
     scores: np.ndarray = field(repr=False)
     stars_won: np.ndarray = field(repr=False)
@@ -56,14 +61,22 @@ class StrategyResult:
 
     @property
     def key(self) -> str:
-        return f"{self.stars}-{self.cap_rule}"
+        return f"{self.stars}-{self.cap_rule}-{self.depth_stretch}"
+
+    @property
+    def star_policy(self) -> str:
+        if not self.stars:
+            return "No stars"
+        limit = {"max_bid": "max bid", "expected": "expected price", "stretch": "market +20%"}[self.cap_rule]
+        return f"{self.stars} star{'s' if self.stars > 1 else ''} to {limit}"
+
+    @property
+    def depth_policy(self) -> str:
+        return "others to our value" if self.depth_stretch is None else f"others to market +{round(self.depth_stretch * 100)}%"
 
     @property
     def name(self) -> str:
-        if not self.stars:
-            return "No stars: all depth"
-        limit = "his max bid" if self.cap_rule == "max_bid" else "expected price"
-        return f"{self.stars} star{'s' if self.stars > 1 else ''}, bid to {limit}"
+        return f"{self.star_policy}, {self.depth_policy}"
 
 
 def simulate_prices(players: pd.DataFrame, settings: LeagueSettings, sim: SimSettings, rng: np.random.Generator) -> pd.DataFrame:
@@ -84,6 +97,25 @@ def band_of(price: float, star: bool, settings: LeagueSettings) -> str:
     return "other"
 
 
+def market_of(players: pd.DataFrame) -> pd.Series:
+    return players["market_price"].fillna(players["auction_value"])
+
+
+def depth_caps(players: pd.DataFrame, stretch: float | None) -> pd.Series:
+    """Most we'd bid on a non-star: market + stretch, never above our value."""
+    value = players["auction_value"]
+    capped = value if stretch is None else np.minimum(value, market_of(players) * (1 + stretch))
+    return capped.round()
+
+
+def star_caps(stars: pd.DataFrame, rule: str, bids: dict[str, int], sim: SimSettings) -> pd.Series:
+    if rule == "expected":
+        return stars["price"]
+    if rule == "stretch":
+        return (market_of(stars) * (1 + sim.star_stretch)).round()
+    return stars["player"].map(bids)
+
+
 def run_strategy(
     players: pd.DataFrame,
     settings: LeagueSettings,
@@ -91,15 +123,20 @@ def run_strategy(
     stars: int,
     cap_rule: str,
     bids: dict[str, int],
+    sim: SimSettings,
+    depth_stretch: float | None = None,
 ) -> StrategyResult:
     core_pool = players[players["core"]]
     spec = PlanSpec(f"sim-{stars}", "", "", stars=stars, evenness=0.0, cost="expected")
-    targets = solve_plan(players, settings, spec)
+    # Star targets never include overpriced stars: the market already pays well over our value.
+    targets = solve_plan(players[players["star_label"] != "Overpriced star"], settings, spec)
     target_stars = targets.picks[targets.picks["star"]]
-    caps = target_stars["price"] if cap_rule == "expected" else target_stars["player"].map(bids)
+    caps = star_caps(target_stars, cap_rule, bids, sim)
 
     star_idx = [players.index[players["player"] == name][0] for name in target_stars["player"]]
-    depth = core_pool[~core_pool["star"]]
+    # Everyone drafted who isn't a star, so end-of-draft bargains are there to fill out a roster.
+    depth = players[~players["star"]]
+    depth_cap = depth_caps(depth, depth_stretch)
     spots = settings.core_size
     scores, won_counts, spends, bought = [], [], [], []
     for _, scenario in prices.iterrows():
@@ -110,18 +147,22 @@ def run_strategy(
             if cost <= cap and spent + cost + settings.min_bid * (spots - len(won) - 1) <= settings.core_budget:
                 won.append(name)
                 spent += cost
+        affordable = depth[scenario[depth.index] <= depth_cap]  # we drop out above our ceiling
         roster = None
         while roster is None:
             try:
                 roster = solve_roster(
-                    pd.concat([depth, core_pool[core_pool["player"].isin(won)]]), settings,
+                    pd.concat([affordable, core_pool[core_pool["player"].isin(won)]]), settings,
                     replace(spec, stars=None), core_slots(settings), settings.core_budget,
                     settings.core_position_caps, prices=scenario, must_include=frozenset(won),
                 )
             except ValueError:
-                if not won:
+                if won:
+                    won.pop()  # those stars leave no legal roster in budget: stop at one fewer
+                elif len(affordable) < len(depth):
+                    affordable = depth  # ceilings too tight to fill a lineup: pay what it takes
+                else:
                     raise
-                won.pop()  # those stars leave no legal roster in budget: stop at one fewer
         scores.append(roster["score"].sum())
         bought.extend(roster["player"])
         won_counts.append(len(won))
@@ -129,7 +170,7 @@ def run_strategy(
     band_spend = pd.DataFrame(spends).fillna(0)
     buy_rate = pd.Series(bought).value_counts() / len(prices)
     return StrategyResult(
-        stars, cap_rule, targets, np.array(scores), np.array(won_counts), band_spend, buy_rate,
+        stars, cap_rule, depth_stretch, targets, np.array(scores), np.array(won_counts), band_spend, buy_rate,
         pd.Series(caps.to_numpy(), index=target_stars["player"]),
     )
 
@@ -150,10 +191,18 @@ def optimize(
     bids = star_bids(drafted, settings, sim) if bids is None else bids
     bid_map = dict(zip(bids["player"], bids["max_bid"]))
     prices = simulate_prices(drafted, settings, sim, np.random.default_rng(sim.seed))
-    results = []
-    for stars in sim.star_counts:
-        for rule in (sim.cap_rules if stars else sim.cap_rules[:1]):
-            results.append(run_strategy(drafted, settings, prices, stars, rule, bid_map))
+    # Stage 1: how many stars and how high to bid on them (others up to our value).
+    results = [
+        run_strategy(drafted, settings, prices, stars, rule, bid_map, sim)
+        for stars in sim.star_counts
+        for rule in (sim.cap_rules if stars else sim.cap_rules[:1])
+    ]
+    # Stage 2: for the best star policy, how far over market to go on everyone else.
+    best = max(results, key=lambda r: r.scores.mean())
+    results += [
+        run_strategy(drafted, settings, prices, best.stars, best.cap_rule, bid_map, sim, stretch)
+        for stretch in sim.depth_stretch if stretch is not None
+    ]
     return sorted(results, key=lambda r: -r.scores.mean())
 
 
@@ -174,6 +223,50 @@ def robustness(players: pd.DataFrame, settings: LeagueSettings, sim: SimSettings
     return rooms
 
 
+def range_plan(players: pd.DataFrame, best: StrategyResult, settings: LeagueSettings, sim: SimSettings) -> pd.DataFrame:
+    """The winning roster with a price range per player and two backups per slot.
+
+    target: what he usually goes for (market, +premium at $40+). stretch: market +20%,
+    capped at walk-away. walk_away: our value, or the star cap for targeted stars.
+    """
+    plan = pd.concat([best.targets.picks, best.targets.bench], ignore_index=True)
+    by_name = players.set_index("player")
+    market = market_of(by_name.loc[plan["player"]]).to_numpy()
+    value = plan["auction_value"].to_numpy()
+    star_cap = plan["player"].map(best.caps)
+    walk = star_cap.fillna(pd.Series(value).round()).astype(int).to_numpy()
+    target = np.minimum(plan["price"].to_numpy(), walk)
+    stretch = np.clip(np.round(market * (1 + sim.star_stretch)), target, walk).astype(int)
+    out = plan[["slot", "player", "pos", "score", "star_label", "auction_value"]].assign(
+        market_price=market, target=target, stretch=stretch, walk_away=walk,
+    )
+
+    # Backups: best-scoring players not on the plan who fit the slot, cost about the same,
+    # and are still worth their price. Stars back up stars; spread picks across slots.
+    taken = set(plan["player"])
+    pool = players[players["drafted"] & ~players["player"].isin(taken)
+                   & ~players["star_label"].isin(["Overpriced star", "Hype"])]
+    pool = pool.assign(positions=pool["pos"].map(parse_positions), target=bid_price(pool["expected_price"], settings))
+    pool = pool[pool["target"] <= pool["auction_value"].round()]
+    used: dict[str, int] = {}
+    backups = []
+    for _, row in out.iterrows():
+        fits = pool[pool["positions"].map(lambda p, s=row["slot"]: can_fill(s, p))]
+        if row["player"] in best.caps.index:
+            fits = fits[fits["star"]] if fits["star"].any() else fits
+        else:
+            fits = fits[~fits["star"] & fits["target"].between(0.5 * row["target"] - 2, row["stretch"] + 5)]
+        ranked = fits.assign(reuse=fits["player"].map(used).fillna(0)).sort_values(["reuse", "score"], ascending=[True, False])
+        picks = ranked.head(2)
+        for name in picks["player"]:
+            used[name] = used.get(name, 0) + 1
+        backups.append([
+            {"player": b.player, "target": int(b.target), "walk_away": int(round(b.auction_value))}
+            for b in picks.itertuples()
+        ])
+    return out.assign(backups=backups)
+
+
 def optimized_payload(players: pd.DataFrame, settings: LeagueSettings, sim: SimSettings) -> dict | None:
     """Everything the board shows about the optimization, or None without market prices."""
     if not has_market(players):
@@ -192,6 +285,7 @@ def optimized_payload(players: pd.DataFrame, settings: LeagueSettings, sim: SimS
     spend = best.band_spend.mean()
     summarize = lambda r: {
         "key": r.key, "name": r.name, "stars": r.stars, "cap_rule": r.cap_rule,
+        "depth_stretch": r.depth_stretch, "star_policy": r.star_policy, "depth_policy": r.depth_policy,
         "mean": round(float(r.scores.mean()), 2),
         "p10": round(float(np.percentile(r.scores, 10)), 2),
         "p90": round(float(np.percentile(r.scores, 90)), 2),
@@ -210,6 +304,7 @@ def optimized_payload(players: pd.DataFrame, settings: LeagueSettings, sim: SimS
             "star_targets": stars.assign(cap=stars["player"].map(best.caps)),
             "band_spend": [{"band": b, "spend": round(float(spend.get(b, 0.0)))} for b in band_order],
             "target_list": target_list,
+            "range_plan": range_plan(players, best, settings, sim),
         },
         "rooms": [
             {"room": room["room"], "note": room["note"], "top": [summarize(r) for r in room["top"]]}

@@ -186,23 +186,44 @@ function overpayRule() {
   return `Each star and hype player has a max bid below. ${over.length ? `Worth overpaying: ${over.join(", ")}.` : "Nobody is worth much over expected price."} Every other star has a max bid under what the room will pay, so buy him only if he slips to it; the ${hype} hype players are almost never worth their price.`;
 }
 
+// The winning roster as price ranges: target (usual price), stretch (market +20%), walk away.
+function renderRangePlan(B) {
+  const rows = B.range_plan;
+  const hi = Math.max(...rows.map(r => r.walk_away));
+  const x = v => (v / hi) * 100;
+  $("range-note").textContent = "Target is what he usually goes for. Stretch is market +20%: pay it without a second thought. Walk away is the most he's worth to this plan (our value, or the star cap). Between stretch and walk away he's still a steal, just a smaller one. If you lose a player, move to a backup at about the same money.";
+  $("range-body").innerHTML = rows.map((r, i) => `
+    <tr class="${i === S.core_size ? "range-divider" : ""}${i >= S.core_size ? " long" : ""}">
+      <td class="slot">${slotLabel(r.slot)}</td>
+      <td>${esc(r.player)}${starBadge(r.player)}</td>
+      <td class="num"><b>$${r.target}</b></td><td class="num">$${r.stretch}</td><td class="num">$${r.walk_away}</td>
+      <td class="rp-cell" title="$${r.target} target, $${r.stretch} stretch, $${r.walk_away} walk away"><span class="rp-track"><span class="rp-soft" style="left:${x(r.target)}%;width:${Math.max(x(r.walk_away) - x(r.target), 0.8)}%"></span><span class="rp-firm" style="left:${x(r.target)}%;width:${Math.max(x(r.stretch) - x(r.target), 0.8)}%"></span></span></td>
+      <td class="backups">${r.backups.map(b => `${esc(b.player)}${starBadge(b.player)} <span class="pos-cell">$${b.target}–${b.walk_away}</span>`).join("<br>") || "–"}</td>
+    </tr>`).join("");
+  const core = rows.slice(0, S.core_size), bench = rows.slice(S.core_size);
+  const t = list => list.reduce((a, r) => a + r.target, 0), st = list => list.reduce((a, r) => a + r.stretch, 0);
+  const coreRoom = S.core_budget - t(core);
+  $("range-totals").innerHTML = `At target the core costs <b>$${t(core)}</b> of $${S.core_budget} and the bench <b>$${t(bench)}</b> of $${S.bench_budget}. Stretching on every core player would cost <b>$${st(core)}</b>, $${st(core) - t(core)} more, so you can't stretch on all of them: each dollar over target on one player comes back by taking a backup or a cheaper steal elsewhere${coreRoom > 0 ? ` (you start with $${coreRoom} spare)` : ""}.`;
+}
+
 function renderOptimized() {
   const O = S.optimized;
   $("optimized").hidden = !O;
   if (!O) return;
   const B = O.best;
   const pct = x => `${Math.round(x * 100)}%`;
-  const stars = B.star_targets.map(t => `${t.player} (max bid $${t.cap})`).join(" and ");
+  const stars = B.star_targets.map(t => `${t.player} (up to $${t.cap})`).join(", ");
   const worst = O.strategies[O.strategies.length - 1];
   const under = B.star_targets.filter(t => STAR_LABEL.get(t.player) === "Underpriced star").map(t => t.player);
   $("opt-lede").textContent = B.stars
-    ? `Across ${O.scenarios} simulated auctions, the best version of the plan is: target ${B.stars} star${B.stars > 1 ? "s" : ""}: ${stars}${B.cap_rule === "max_bid" ? ", bidding up to each one's max bid" : ", bidding no more than expected price"}.` +
+    ? `Across ${O.scenarios} simulated auctions, the best version of the plan is: target ${B.stars} star${B.stars > 1 ? "s" : ""}: ${stars}; ${B.depth_policy}.` +
       (under.length ? ` ${under.join(" and ")} ${under.length > 1 ? "are" : "is"} underpriced by the market, so ${under.length > 1 ? "they" : "he"} cost${under.length > 1 ? "" : "s"} like depth and ${under.length > 1 ? "score" : "scores"} like ${under.length > 1 ? "stars" : "a star"}.` : "") +
       ` Build the rest from the steal zone and under-$10 players on the target list. Lowest: ${worst.name} (${worst.mean.toFixed(1)}).`
     : `Across ${O.scenarios} simulated auctions, skipping stars scored best: build the whole core from underpriced players.`;
+  renderRangePlan(B);
   $("opt-facts").innerHTML = [
     [B.mean.toFixed(1), "avg core score", `${B.p10.toFixed(1)}–${B.p90.toFixed(1)} in 8 of 10 auctions`],
-    [B.stars ? pct(B.stars_won / B.stars) : "–", "stars won", B.stars ? (B.cap_rule === "max_bid" ? "bidding to max bid" : "bidding to expected price") : "no stars targeted"],
+    [B.stars ? pct(B.stars_won / B.stars) : "–", "stars won", B.star_policy],
     [O.strategies.length, "strategies tested", `${O.scenarios} auctions each`],
     [`±${pct(O.price_noise)}`, "price swings", `${pct(O.bargain_shrink)} of each bargain bid away`],
   ].map(([v, k, sub]) => `<div class="fact"><strong>${v}</strong><span>${k}</span><small>${sub}</small></div>`).join("");
@@ -227,8 +248,8 @@ function renderOptimized() {
     <div class="rc-row rc-axis" aria-hidden="true"><span></span><span class="rc-track">${ticks.map(t => `<b style="left:${x(t)}%">${t}</b>`).join("")}</span><span></span></div>`;
 
   const targeted = new Set(B.star_targets.map(t => t.player));
-  $("opt-bids-note").textContent = "Max bid: the most you can pay and still end up with a better core than the best one without him, with the room bidding like the simulation. Above it, the money does more spread across steals.";
-  $("opt-bids").innerHTML = O.bids.map(b => `<tr class="${targeted.has(b.player) ? "target" : ""}"><td>${esc(b.player)}${starBadge(b.player)}${targeted.has(b.player) ? ' <span class="badge star">Target</span>' : ""}</td><td class="num">${money(b.auction_value)}</td><td class="num">${money(b.market_price)}</td><td class="num">$${b.expected}</td><td class="num"><b>${b.max_bid ? "$" + b.max_bid : "–"}</b></td><td>${bidCall(b)}</td></tr>`).join("");
+  $("opt-bids-note").textContent = `Targets: the stars the winning plan goes after, up to their cap (${B.star_policy}). Break-even: the most you can pay and still end up with a better core than the best one without him. For anyone else, only buy at or under break-even.`;
+  $("opt-bids").innerHTML = O.bids.map(b => `<tr class="${targeted.has(b.player) ? "target" : ""}"><td>${esc(b.player)}${starBadge(b.player)}${targeted.has(b.player) ? ' <span class="badge star">Target</span>' : ""}</td><td class="num">${money(b.auction_value)}</td><td class="num">${money(b.market_price)}</td><td class="num">$${b.expected}</td><td class="num">$${Math.round(b.market_price * 1.2)}</td><td class="num">${b.max_bid ? "$" + b.max_bid : "–"}</td><td>${targeted.has(b.player) ? `<span class="pill wait">Target: up to $${B.star_targets.find(t => t.player === b.player).cap}</span>` : bidCall(b)}</td></tr>`).join("");
 
   const maxBand = Math.max(...B.band_spend.map(b => b.spend), 1);
   const bandName = b => (b === "stars" ? "Stars" : b);
