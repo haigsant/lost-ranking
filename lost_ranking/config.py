@@ -26,10 +26,17 @@ class LeagueSettings:
     roster: dict[str, int] = field(default_factory=lambda: dict(DEFAULT_ROSTER))
     # Replacement level = mean score of the best N undrafted players (smooths noise).
     replacement_depth: int = 3
-    # A gap to the next player is a "cliff" when it exceeds
-    # median gap + cliff_z * robust std (MAD) within the position.
+    # Tier breaks (minor cliffs): a gap to the next player at the position that is
+    # at least tier_ratio x the median gap among its neighbors (tier_window on each
+    # side), so smaller drops still split groups further down the list.
+    tier_ratio: float = 2.0
+    tier_window: int = 5
+    tier_min_gap: float = 0.1
+    # Backstop: a tier longer than this is split at its largest internal gap.
+    max_tier_size: int = 8
+    # Major cliffs: a gap above median gap + cliff_z * robust std (MAD) across the
+    # whole position's draft pool, and at least cliff_min_gap in score units.
     cliff_z: float = 3.0
-    # ...and is at least this large in raw score units (ignores tiny noise).
     cliff_min_gap: float = 0.3
 
     @property

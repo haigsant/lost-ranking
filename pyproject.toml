@@ -18,5 +18,8 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 packages = ["lost_ranking"]
 
+[tool.setuptools.package-data]
+lost_ranking = ["templates/*.html"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

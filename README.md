@@ -13,7 +13,8 @@ python -m lost_ranking data/raw/dynatyze_redraft_2026-09-25.csv
 pytest
 ```
 
-Writes `output/<input>_values.csv` and prints a position scarcity summary.
+Writes `output/<input>_values.csv` and `output/<input>_board.html` (an interactive auction board
+with position tiers; open it in a browser), and prints a position scarcity summary.
 
 ## How the dollars are set
 
@@ -36,6 +37,7 @@ Writes `output/<input>_values.csv` and prints a position scarcity summary.
 | `scarcity_premium` | `auction_value - field_value`: what position scarcity adds or removes |
 | `scarce_pos` | The player's eligible position with the worst replacement (where eligibility helps most) |
 | `pos_rank` / `pos_tier` | Rank and tier within `scarce_pos`. A new tier starts after each cliff |
+| `cliff_strength` | `major`, `minor` (tier break) or blank for the drop after this player |
 | `left_in_tier` | Players left in the same tier below this one |
 | `gap_to_next` | Score drop to the next player at `scarce_pos` |
 | `cliff_after` | True when that drop is an outlier (a cliff) |
@@ -43,9 +45,20 @@ Writes `output/<input>_values.csv` and prints a position scarcity summary.
 | `field_vorp`, `pos_vorp`, `pos_replacement` | The numbers behind the dollars |
 | `drafted`, `draft_slot` | Whether and where the simulated draft rostered them |
 
-A **cliff** is a gap to the next player at the same position larger than
-`median gap + 3 x robust std` (a median/MAD measure, so a few huge gaps at the top
-don't hide smaller ones) and at least 0.3 score points. Tune it in `LeagueSettings`.
+### Tiers and cliffs
+
+Each position's eligible players are listed best to worst, and a tier ends
+after any player where the drop to the next one stands out:
+
+- **Tier break (minor):** the drop is at least 2x the median drop among the
+  5 gaps on either side, and at least 0.1 score points. Because it compares to
+  nearby gaps, the list keeps splitting into groups further down, where every
+  drop is smaller.
+- **Major cliff:** the drop is large for the position as a whole
+  (`median + 3 x robust std` of all its draft-pool gaps, and at least 0.3).
+- Any tier longer than 8 players is split at its largest internal gap.
+
+All thresholds live in `LeagueSettings`.
 
 ## Layout
 
@@ -56,7 +69,8 @@ lost_ranking/
   loaders.py    source CSV -> standard columns (add new sources here)
   valuation.py  draft simulation, replacement levels, VORP, dollars
   scarcity.py   position tiers, cliffs, position summary
-  pipeline.py   load -> value -> scarcity -> output table
+  pipeline.py   load -> value -> scarcity -> output tables
+  report.py     HTML auction board (template in templates/board.html)
   cli.py        command line
 ```
 

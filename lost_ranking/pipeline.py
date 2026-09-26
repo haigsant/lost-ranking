@@ -27,6 +27,7 @@ OUTPUT_COLUMNS = [
     "left_in_tier",
     "gap_to_next",
     "cliff_after",
+    "cliff_strength",
     "scarcity_note",
     "field_vorp",
     "pos_vorp",
@@ -40,12 +41,17 @@ OUTPUT_COLUMNS = [
     "source_updated",
 ]
 
+TIER_PLAYER_COLUMNS = ["player", "team", "score", "auction_value", "drafted", "source_url"]
+
 
 @dataclass
 class ValuationResult:
     players: pd.DataFrame
     positions: pd.DataFrame
+    # One row per (player, eligible position): rank, tier and cliff at that position.
+    tiers: pd.DataFrame
     replacement: dict[str, float]
+    settings: LeagueSettings
 
 
 def run(path: str | Path, settings: LeagueSettings, source: str = "dynatyze") -> ValuationResult:
@@ -57,5 +63,7 @@ def run(path: str | Path, settings: LeagueSettings, source: str = "dynatyze") ->
     return ValuationResult(
         players=df[columns],
         positions=position_summary(df, tiers, levels),
+        tiers=tiers.join(df[[c for c in TIER_PLAYER_COLUMNS if c in df.columns]], on="player_idx"),
         replacement=levels,
+        settings=settings,
     )

@@ -71,3 +71,22 @@ def test_sample_csv_end_to_end():
     assert drafted["auction_value"].sum() == pytest.approx(settings.total_budget)
     assert players.iloc[0]["player"] == "Nikola Jokić"
     assert set(result.positions["pos"]) == {"PG", "SG", "SF", "PF", "C"}
+
+
+def test_minor_tier_breaks_below_major_threshold():
+    # One huge drop at the top, then small but clear local drops further down.
+    scores = [10, 5, 4.9, 4.8, 4.55, 4.45, 4.35, 4.1, 4.0, 3.9]
+    df = make_players([(f"C{i}", "C", s) for i, s in enumerate(scores)])
+    df["drafted"] = True
+    tiers = position_tiers(df, LeagueSettings())
+    strength = dict(zip(tiers["pos_rank"], tiers["cliff_strength"]))
+    assert strength[1] == "major"
+    assert strength[4] == "minor" and strength[7] == "minor"
+    assert tiers["pos_tier"].max() == 4
+
+
+def test_long_tiers_are_split():
+    df = make_players([(f"C{i}", "C", 10 - 0.1 * i) for i in range(20)])
+    df["drafted"] = True
+    tiers = position_tiers(df, LeagueSettings(max_tier_size=8))
+    assert tiers.groupby("pos_tier").size().max() <= 8

@@ -10,6 +10,7 @@ import pandas as pd
 from .config import LeagueSettings
 from .loaders import SOURCE_COLUMN_MAPS
 from .pipeline import run
+from .report import write_board
 
 MONEY_COLUMNS = ["auction_value", "field_value", "scarcity_premium"]
 SCORE_COLUMNS = ["score", "gap_to_next", "field_vorp", "pos_vorp", "pos_replacement"]
@@ -24,6 +25,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--teams", type=int, default=defaults.teams)
     p.add_argument("--budget", type=int, default=defaults.budget_per_team)
     p.add_argument("--top", type=int, default=30, help="rows to print (0 = none)")
+    p.add_argument("--no-html", action="store_true", help="skip the HTML auction board")
     return p.parse_args(argv)
 
 
@@ -56,6 +58,8 @@ def main(argv: list[str] | None = None) -> None:
             print(f"\nTop {args.top}:")
             print(players[cols].head(args.top).to_string(index=False))
     print(f"\nWrote {output}")
+    if not args.no_html:
+        print(f"Wrote {write_board(result, output.with_name(f'{args.csv.stem}_board.html'))}")
 
 
 if __name__ == "__main__":

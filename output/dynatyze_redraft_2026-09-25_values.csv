@@ -1,151 +1,151 @@
-overall_rank,player,pos,team,score,auction_value,field_value,scarcity_premium,scarce_pos,pos_rank,pos_tier,left_in_tier,gap_to_next,cliff_after,scarcity_note,field_vorp,pos_vorp,pos_replacement,drafted,draft_slot,source,source_rank,source_id,source_url,source_updated
-1,Nikola Jokić,C,DEN,10.59,72.3,75.3,-2.9,C,1,1,0,1.15,True,Last C before cliff: -1.15 to Victor Wembanyama,11.86,11.9,-1.31,True,C,dynatyze,1,3,https://dynatyze.com/basketball/players/3,2026-09-25
-2,Shai Gilgeous-Alexander,PG/G,OKC,9.81,68.2,70.4,-2.1,PG,1,1,0,4.3,True,Last PG before cliff: -4.30 to Tyrese Maxey,11.08,11.21,-1.4,True,PG,dynatyze,2,2,https://dynatyze.com/basketball/players/2,2026-09-25
-3,Victor Wembanyama,C,SAS,9.44,65.4,68.1,-2.6,C,2,2,0,6.02,True,Last C before cliff: -6.02 to Karl-Anthony Towns,10.71,10.75,-1.31,True,C,dynatyze,3,1,https://dynatyze.com/basketball/players/1,2026-09-25
-4,Tyrese Maxey,PG/SG/G,PHI,5.51,42.5,43.5,-1.0,SG,1,1,2,0.03,False,,6.78,6.92,-1.41,True,PG,dynatyze,4,8,https://dynatyze.com/basketball/players/8,2026-09-25
-5,Luka Dončić,PG/SG/G,LAL,5.48,42.3,43.3,-1.0,SG,2,1,1,0.13,False,1 SG left in tier 1,6.75,6.89,-1.41,True,PG,dynatyze,5,4,https://dynatyze.com/basketball/players/4,2026-09-25
-6,Kawhi Leonard,SG/G/SF/PF/F,TOR,5.35,41.5,42.5,-0.9,SG,3,1,0,0.73,True,Last SG before cliff: -0.73 to Kevin Durant,6.62,6.76,-1.41,True,SG,dynatyze,6,125,https://dynatyze.com/basketball/players/125,2026-09-25
-7,Kevin Durant,SG/G/SF/PF/F,HOU,4.62,37.2,37.9,-0.7,SG,4,2,0,0.44,True,Last SG before cliff: -0.44 to Anthony Edwards,5.89,6.03,-1.41,True,SG,dynatyze,7,153,https://dynatyze.com/basketball/players/153,2026-09-25
-8,Jamal Murray,PG/G,DEN,4.35,35.5,36.2,-0.7,PG,4,3,5,0.17,False,,5.62,5.75,-1.4,True,PG,dynatyze,8,14,https://dynatyze.com/basketball/players/14,2026-09-25
-9,Anthony Edwards,PG/SG/G/SF/F,MIN,4.18,34.5,35.1,-0.6,SG,5,3,0,0.37,True,Last SG before cliff: -0.37 to Donovan Mitchell,5.45,5.59,-1.41,True,PG,dynatyze,9,9,https://dynatyze.com/basketball/players/9,2026-09-25
-10,Donovan Mitchell,PG/SG/G,CLE,3.81,32.3,32.8,-0.5,SG,6,4,12,0.12,False,,5.08,5.22,-1.41,True,PG,dynatyze,10,28,https://dynatyze.com/basketball/players/28,2026-09-25
-11,James Harden,PG/SG/G,CLE,3.69,31.6,32.1,-0.5,SG,7,4,11,0.23,False,,4.96,5.1,-1.41,True,PG,dynatyze,11,154,https://dynatyze.com/basketball/players/154,2026-09-25
-12,Cade Cunningham,PG/SG/G,DET,3.46,30.2,30.6,-0.4,SG,8,4,10,0.25,False,,4.73,4.87,-1.41,True,PG,dynatyze,12,12,https://dynatyze.com/basketball/players/12,2026-09-25
-13,Karl-Anthony Towns,PF/F/C,NYK,3.42,29.3,30.4,-1.0,PF,3,3,0,0.42,True,Last PF before cliff: -0.42 to Scottie Barnes,4.69,4.73,-1.31,True,PF,dynatyze,13,6,https://dynatyze.com/basketball/players/6,2026-09-25
-14,Tyrese Haliburton,PG/SG/G,IND,3.21,28.7,29.1,-0.4,SG,9,4,9,0.15,False,,4.48,4.62,-1.41,True,PG,dynatyze,14,5,https://dynatyze.com/basketball/players/5,2026-09-25
-15,Trey Murphy III,SG/G/SF/F,NOP,3.06,27.8,28.1,-0.3,SG,10,4,8,0.06,False,,4.33,4.47,-1.41,True,SG,dynatyze,15,17,https://dynatyze.com/basketball/players/17,2026-09-25
-16,Scottie Barnes,SG/G/SF/PF/F/C,TOR,3.0,27.4,27.7,-0.3,SG,11,4,7,0.24,False,,4.27,4.41,-1.41,True,SG,dynatyze,16,33,https://dynatyze.com/basketball/players/33,2026-09-25
-17,Jayson Tatum,SF/PF/F,BOS,2.99,27.1,27.7,-0.6,SF,6,4,3,0.13,False,,4.26,4.35,-1.36,True,SF,dynatyze,17,7,https://dynatyze.com/basketball/players/7,2026-09-25
-18,Jalen Johnson,SF/PF/F,ATL,2.86,26.3,26.9,-0.6,SF,7,4,2,0.14,False,,4.13,4.22,-1.36,True,SF,dynatyze,18,10,https://dynatyze.com/basketball/players/10,2026-09-25
-19,Bam Adebayo,PF/F/C,MIA,2.85,25.9,26.8,-0.9,PF,7,4,10,0.19,False,,4.12,4.16,-1.31,True,PF,dynatyze,19,39,https://dynatyze.com/basketball/players/39,2026-09-25
-20,Derrick White,PG/SG/G,BOS,2.76,26.0,26.2,-0.2,SG,12,4,6,0.04,False,,4.03,4.17,-1.41,True,PG,dynatyze,20,40,https://dynatyze.com/basketball/players/40,2026-09-25
-21,Dyson Daniels,PG/SG/G/SF/F,ATL,2.72,25.8,26.0,-0.2,SG,13,4,5,0.06,False,,3.99,4.13,-1.41,True,SG,dynatyze,21,11,https://dynatyze.com/basketball/players/11,2026-09-25
-22,Amen Thompson,PG/SG/G/SF/PF/F,HOU,2.66,25.4,25.6,-0.2,SG,14,4,4,0.16,False,,3.93,4.07,-1.41,True,SG,dynatyze,22,35,https://dynatyze.com/basketball/players/35,2026-09-25
-23,Devin Booker,PG/SG/G,PHX,2.5,24.4,24.6,-0.2,SG,15,4,3,0.24,False,,3.77,3.91,-1.41,True,SG,dynatyze,23,34,https://dynatyze.com/basketball/players/34,2026-09-25
-24,Chet Holmgren,PF/F/C,OKC,2.45,23.5,24.3,-0.8,PF,9,4,8,0.23,False,,3.72,3.76,-1.31,True,PF,dynatyze,24,20,https://dynatyze.com/basketball/players/20,2026-09-25
-25,Stephen Curry,PG/G,GSW,2.44,24.0,24.2,-0.2,PG,14,4,42,0.18,False,,3.71,3.84,-1.4,True,G,dynatyze,25,146,https://dynatyze.com/basketball/players/146,2026-09-25
-26,Austin Reaves,PG/SG/G/SF/F,LAL,2.26,23.0,23.1,-0.1,SG,16,4,2,0.04,False,,3.53,3.67,-1.41,True,SG,dynatyze,26,37,https://dynatyze.com/basketball/players/37,2026-09-25
-27,Cooper Flagg,PG/SG/G/SF/PF/F,DAL,2.22,22.8,22.9,-0.1,SG,17,4,1,0.16,False,1 SG left in tier 4,3.49,3.63,-1.41,True,SG,dynatyze,27,593,https://dynatyze.com/basketball/players/593,2026-09-25
-28,OG Anunoby,SF/PF/F,NYK,2.18,22.2,22.6,-0.4,SF,12,5,2,0.06,False,,3.45,3.54,-1.36,True,SF,dynatyze,28,29,https://dynatyze.com/basketball/players/29,2026-09-25
-29,Michael Porter Jr.,SF/PF/F,BKN,2.12,21.9,22.2,-0.4,SF,13,5,1,0.06,False,1 SF left in tier 5,3.39,3.48,-1.36,True,SF,dynatyze,29,64,https://dynatyze.com/basketball/players/64,2026-09-25
-30,Desmond Bane,PG/SG/G/SF/F,ORL,2.06,21.8,21.9,-0.1,SG,18,4,0,0.42,True,Last SG before cliff: -0.42 to VJ Edgecombe,3.33,3.47,-1.41,True,SG,dynatyze,30,23,https://dynatyze.com/basketball/players/23,2026-09-25
-31,Anthony Davis,PF/F/C,WAS,2.03,21.0,21.7,-0.7,PF,13,4,4,0.21,False,,3.3,3.34,-1.31,True,PF,dynatyze,31,31,https://dynatyze.com/basketball/players/31,2026-09-25
-32,Jalen Brunson,PG/G,NYK,1.91,20.9,20.9,-0.1,PG,18,4,38,0.27,False,,3.18,3.31,-1.4,True,G,dynatyze,32,49,https://dynatyze.com/basketball/players/49,2026-09-25
-33,Jaren Jackson Jr.,PF/F/C,UTA,1.82,19.8,20.4,-0.6,PF,14,4,3,0.07,False,,3.09,3.13,-1.31,True,PF,dynatyze,33,22,https://dynatyze.com/basketball/players/22,2026-09-25
-34,Evan Mobley,PF/F/C,CLE,1.75,19.3,19.9,-0.6,PF,15,4,2,0.16,False,,3.02,3.06,-1.31,True,PF,dynatyze,34,13,https://dynatyze.com/basketball/players/13,2026-09-25
-35,Joel Embiid,C,PHI,1.69,19.0,19.5,-0.6,C,10,6,9,0.01,False,,2.96,3.0,-1.31,True,C,dynatyze,35,72,https://dynatyze.com/basketball/players/72,2026-09-25
-36,Onyeka Okongwu,C,ATL,1.68,18.9,19.5,-0.6,C,11,6,8,0.05,False,,2.95,2.99,-1.31,True,C,dynatyze,36,54,https://dynatyze.com/basketball/players/54,2026-09-25
-37,VJ Edgecombe,PG/SG/G,PHI,1.64,19.3,19.2,0.1,SG,19,5,0,0.41,True,Last SG before cliff: -0.41 to Jalen Williams,2.91,3.05,-1.41,True,G,dynatyze,37,590,https://dynatyze.com/basketball/players/590,2026-09-25
-38,Jalen Duren,C,DET,1.63,18.6,19.2,-0.6,C,12,6,7,0.04,False,,2.9,2.94,-1.31,True,C,dynatyze,38,55,https://dynatyze.com/basketball/players/55,2026-09-25
-39,Alperen Sengun,PF/F/C,HOU,1.59,18.4,18.9,-0.6,PF,16,4,1,0.03,False,1 PF left in tier 4,2.86,2.9,-1.31,True,PF,dynatyze,39,57,https://dynatyze.com/basketball/players/57,2026-09-25
-40,Lauri Markkanen,SF/PF/F,UTA,1.56,18.5,18.7,-0.2,SF,15,6,0,0.33,True,Last SF before cliff: -0.33 to Jalen Williams,2.83,2.92,-1.36,True,SF,dynatyze,40,71,https://dynatyze.com/basketball/players/71,2026-09-25
-41,LaMelo Ball,PG/G,MIN,1.36,17.6,17.5,0.1,PG,20,4,36,0.13,False,,2.63,2.76,-1.4,True,G,dynatyze,41,24,https://dynatyze.com/basketball/players/24,2026-09-25
-42,Nikola Vučević,C,ORL,1.29,16.6,17.0,-0.5,C,14,6,5,0.06,False,,2.56,2.6,-1.31,True,C,dynatyze,42,119,https://dynatyze.com/basketball/players/119,2026-09-25
-43,Jalen Williams,SG/G/SF/PF/F/C,OKC,1.23,16.8,16.7,0.2,SG,20,6,54,0.0,False,,2.5,2.64,-1.41,True,SF,dynatyze,43,18,https://dynatyze.com/basketball/players/18,2026-09-25
-44,Josh Giddey,PG/SG/G/SF/F,CHI,1.23,16.8,16.7,0.2,SG,21,6,53,0.07,False,,2.5,2.64,-1.41,True,SF,dynatyze,44,43,https://dynatyze.com/basketball/players/43,2026-09-25
-45,Mikal Bridges,SG/G/SF/PF/F,NYK,1.16,16.4,16.2,0.2,SG,22,6,52,0.14,False,,2.43,2.57,-1.41,True,SF,dynatyze,45,81,https://dynatyze.com/basketball/players/81,2026-09-25
-46,De'Aaron Fox,PG/G,SAS,1.14,16.2,16.1,0.1,PG,22,4,34,0.01,False,,2.41,2.54,-1.4,True,G,dynatyze,46,32,https://dynatyze.com/basketball/players/32,2026-09-25
-47,LeBron James,PG/SF/PF/F,PHI,1.13,16.2,16.0,0.1,PG,23,4,33,0.11,False,,2.4,2.53,-1.4,True,SF,dynatyze,47,157,https://dynatyze.com/basketball/players/157,2026-09-25
-48,Domantas Sabonis,PF/F/C,SAC,1.11,15.5,15.9,-0.4,PF,21,5,9,0.14,False,,2.38,2.42,-1.31,True,PF,dynatyze,48,16,https://dynatyze.com/basketball/players/16,2026-09-25
-49,Jarrett Allen,C,CLE,1.04,15.1,15.5,-0.4,C,17,6,2,0.16,False,,2.31,2.35,-1.31,True,C,dynatyze,49,48,https://dynatyze.com/basketball/players/48,2026-09-25
-50,Kyrie Irving,PG/SG/G,DAL,1.02,15.6,15.4,0.2,SG,23,6,51,0.05,False,,2.29,2.43,-1.41,True,G,dynatyze,50,82,https://dynatyze.com/basketball/players/82,2026-09-25
-51,Damian Lillard,PG/G,POR,1.0,15.4,15.2,0.2,PG,25,4,31,0.16,False,,2.27,2.4,-1.4,True,G,dynatyze,51,103,https://dynatyze.com/basketball/players/103,2026-09-25
-52,Jimmy Butler III,SG/G/SF/PF/F,GSW,0.97,15.3,15.0,0.2,SG,24,6,50,0.06,False,,2.24,2.38,-1.41,True,SF,dynatyze,52,166,https://dynatyze.com/basketball/players/166,2026-09-25
-53,Kon Knueppel,SG/G/SF/F,CHA,0.91,14.9,14.7,0.2,SG,25,6,49,0.01,False,,2.18,2.32,-1.41,True,G,dynatyze,53,611,https://dynatyze.com/basketball/players/611,2026-09-25
-54,Paul George,SG/SF/PF/F,BOS,0.9,14.9,14.6,0.2,SG,26,6,48,0.06,False,,2.17,2.31,-1.41,True,PF,dynatyze,54,177,https://dynatyze.com/basketball/players/177,2026-09-25
-55,Donovan Clingan,C,POR,0.88,14.1,14.5,-0.4,C,18,6,1,0.05,False,1 C left in tier 6,2.15,2.19,-1.31,True,C,dynatyze,55,145,https://dynatyze.com/basketball/players/145,2026-09-25
-56,Nickeil Alexander-Walker,PG/SG/G,ATL,0.84,14.5,14.2,0.3,SG,27,6,47,0.01,False,,2.11,2.25,-1.41,True,G,dynatyze,56,254,https://dynatyze.com/basketball/players/254,2026-09-25
-57,Jaylen Brown,SG/G/SF/PF/F,PHI,0.83,14.4,14.2,0.3,SG,28,6,46,0.07,False,,2.1,2.24,-1.41,True,PF,dynatyze,57,76,https://dynatyze.com/basketball/players/76,2026-09-25
-58,Myles Turner,C,MIL,0.83,13.8,14.2,-0.4,C,19,6,0,0.33,True,Last C before cliff: -0.33 to Kel'el Ware,2.1,2.14,-1.31,True,C,dynatyze,58,30,https://dynatyze.com/basketball/players/30,2026-09-25
-59,DeMar DeRozan,SG/SF/PF/F,DEN,0.76,14.0,13.7,0.3,SG,29,6,45,0.02,False,,2.03,2.17,-1.41,True,G,dynatyze,59,180,https://dynatyze.com/basketball/players/180,2026-09-25
-60,Franz Wagner,SF/PF/F,ORL,0.75,13.7,13.7,-0.0,SF,25,7,37,0.01,False,,2.02,2.11,-1.36,True,F,dynatyze,60,19,https://dynatyze.com/basketball/players/19,2026-09-25
-61,Brandon Miller,SG/G/SF/PF/F,CHA,0.74,13.9,13.6,0.3,SG,30,6,44,0.13,False,,2.01,2.15,-1.41,True,F,dynatyze,61,41,https://dynatyze.com/basketball/players/41,2026-09-25
-62,Trae Young,PG/G,WAS,0.72,13.7,13.5,0.2,PG,27,4,29,0.11,False,,1.99,2.12,-1.4,True,UTIL,dynatyze,62,38,https://dynatyze.com/basketball/players/38,2026-09-25
-63,Tyler Herro,PG/SG/G,MIL,0.61,13.1,12.8,0.3,SG,31,6,43,0.21,False,,1.88,2.02,-1.41,True,UTIL,dynatyze,63,26,https://dynatyze.com/basketball/players/26,2026-09-25
-64,Jaden McDaniels,SF/PF/F,MIN,0.56,12.5,12.5,0.0,SF,27,7,35,0.16,False,,1.83,1.92,-1.36,True,F,dynatyze,64,70,https://dynatyze.com/basketball/players/70,2026-09-25
-65,Kel'el Ware,PF/C,MIL,0.5,11.8,12.1,-0.3,PF,29,5,1,0.02,False,1 PF left in tier 5,1.77,1.81,-1.31,True,C,dynatyze,65,114,https://dynatyze.com/basketball/players/114,2026-09-25
-66,Kristaps Porziņģis,PF/F/C,GSW,0.48,11.7,12.0,-0.3,PF,30,5,0,0.31,True,Last PF before cliff: -0.31 to Deni Avdija,1.75,1.79,-1.31,True,C,dynatyze,66,15,https://dynatyze.com/basketball/players/15,2026-09-25
-67,Ivica Zubac,C,IND,0.46,11.6,11.8,-0.3,C,22,7,27,0.03,False,,1.73,1.77,-1.31,True,C,dynatyze,67,36,https://dynatyze.com/basketball/players/36,2026-09-25
-68,Rudy Gobert,C,MIN,0.43,11.4,11.7,-0.2,C,23,7,26,0.07,False,,1.7,1.74,-1.31,True,C,dynatyze,68,102,https://dynatyze.com/basketball/players/102,2026-09-25
-69,Josh Hart,SG/G/SF/F,NYK,0.4,11.9,11.5,0.4,SG,32,6,42,0.1,False,,1.67,1.81,-1.41,True,F,dynatyze,69,45,https://dynatyze.com/basketball/players/45,2026-09-25
-70,Payton Pritchard,PG/G,BOS,0.38,11.7,11.3,0.3,PG,29,4,27,0.08,False,,1.65,1.78,-1.4,True,UTIL,dynatyze,70,63,https://dynatyze.com/basketball/players/63,2026-09-25
-71,Walker Kessler,C,LAL,0.36,11.0,11.2,-0.2,C,24,7,25,0.31,False,,1.63,1.67,-1.31,True,C,dynatyze,71,21,https://dynatyze.com/basketball/players/21,2026-09-25
-72,Jalen Suggs,PG/SG/G,ORL,0.3,11.3,10.8,0.4,SG,33,6,41,0.01,False,,1.57,1.71,-1.41,True,UTIL,dynatyze,72,61,https://dynatyze.com/basketball/players/61,2026-09-25
-73,Darius Garland,PG/G,LAC,0.3,11.2,10.8,0.3,PG,31,4,25,0.01,False,,1.57,1.7,-1.4,True,UTIL,dynatyze,73,46,https://dynatyze.com/basketball/players/46,2026-09-25
-74,Immanuel Quickley,PG/SG/G,TOR,0.29,11.2,10.8,0.4,SG,34,6,40,0.12,False,,1.56,1.7,-1.41,True,UTIL,dynatyze,74,90,https://dynatyze.com/basketball/players/90,2026-09-25
-75,Deni Avdija,SG/G/SF/PF/F,POR,0.17,10.5,10.0,0.4,SG,35,6,39,0.03,False,,1.44,1.58,-1.41,True,F,dynatyze,75,87,https://dynatyze.com/basketball/players/87,2026-09-25
-76,Keegan Murray,SF/PF/F,SAC,0.15,10.1,9.9,0.1,SF,30,7,32,0.01,False,,1.42,1.51,-1.36,True,F,dynatyze,76,74,https://dynatyze.com/basketball/players/74,2026-09-25
-77,Brandon Ingram,SG/G/SF/PF/F,LAC,0.14,10.3,9.8,0.4,SG,36,6,38,0.03,False,,1.41,1.55,-1.41,True,F,dynatyze,77,65,https://dynatyze.com/basketball/players/65,2026-09-25
-78,Dejounte Murray,PG/SG/G,NOP,0.11,10.1,9.7,0.5,SG,37,6,37,0.02,False,,1.38,1.52,-1.41,True,UTIL,dynatyze,78,47,https://dynatyze.com/basketball/players/47,2026-09-25
-79,Donte DiVincenzo,PG/SG/G/SF/F,MIN,0.09,10.0,9.5,0.5,SG,38,6,36,0.03,False,,1.36,1.5,-1.41,True,F,dynatyze,79,99,https://dynatyze.com/basketball/players/99,2026-09-25
-80,Cason Wallace,PG/SG/G/SF/F,OKC,0.06,9.8,9.3,0.5,SG,39,6,35,0.02,False,,1.33,1.47,-1.41,True,F,dynatyze,80,88,https://dynatyze.com/basketball/players/88,2026-09-25
-81,Jabari Smith Jr.,PF/F/C,HOU,0.05,9.1,9.3,-0.1,PF,34,6,32,0.01,False,,1.32,1.36,-1.31,True,C,dynatyze,81,129,https://dynatyze.com/basketball/players/129,2026-09-25
-82,Fred VanVleet,PG/G/F,HOU,0.04,9.6,9.2,0.4,PG,36,4,20,0.29,False,,1.31,1.44,-1.4,True,F,dynatyze,82,84,https://dynatyze.com/basketball/players/84,2026-09-25
-83,Toumani Camara,SG/SF/PF/F,POR,0.04,9.7,9.2,0.5,SG,40,6,34,0.12,False,,1.31,1.45,-1.41,True,UTIL,dynatyze,83,91,https://dynatyze.com/basketball/players/91,2026-09-25
-84,Giannis Antetokounmpo,PF/F/C,MIA,-0.07,8.4,8.5,-0.1,PF,36,6,30,0.01,False,,1.2,1.24,-1.31,True,C,dynatyze,84,25,https://dynatyze.com/basketball/players/25,2026-09-25
-85,Andrew Wiggins,SG/G/SF/PF/F,MIA,-0.08,9.0,8.5,0.5,SG,41,6,33,0.1,False,,1.19,1.33,-1.41,True,UTIL,dynatyze,85,95,https://dynatyze.com/basketball/players/95,2026-09-25
-86,Miles Bridges,SF/PF/F,PHX,-0.1,8.6,8.3,0.2,SF,36,7,26,0.02,False,,1.17,1.26,-1.36,True,UTIL,dynatyze,86,51,https://dynatyze.com/basketball/players/51,2026-09-25
-87,Saddiq Bey,SF/PF/F,NOP,-0.12,8.4,8.2,0.2,SF,37,7,25,0.02,False,,1.15,1.24,-1.36,True,UTIL,dynatyze,87,576,https://dynatyze.com/basketball/players/576,2026-09-25
-88,Tobias Harris,SF/PF/F,SAS,-0.14,8.3,8.1,0.2,SF,38,7,24,0.04,False,,1.13,1.22,-1.36,True,UTIL,dynatyze,88,108,https://dynatyze.com/basketball/players/108,2026-09-25
-89,Mark Williams,C,PHX,-0.16,7.9,8.0,-0.1,C,27,7,22,0.07,False,,1.11,1.15,-1.31,True,C,dynatyze,89,27,https://dynatyze.com/basketball/players/27,2026-09-25
-90,Devin Vassell,SG/G/SF/F,SAS,-0.18,8.4,7.8,0.5,SG,42,6,32,0.03,False,,1.09,1.23,-1.41,True,UTIL,dynatyze,90,69,https://dynatyze.com/basketball/players/69,2026-09-25
-91,Norman Powell,SG/G/SF/F,CHI,-0.21,8.2,7.7,0.5,SG,43,6,31,0.04,False,,1.06,1.2,-1.41,True,UTIL,dynatyze,91,101,https://dynatyze.com/basketball/players/101,2026-09-25
-92,Naz Reid,PF/F/C,CHA,-0.23,7.5,7.5,-0.1,PF,41,6,25,0.03,False,,1.04,1.08,-1.31,True,C,dynatyze,92,85,https://dynatyze.com/basketball/players/85,2026-09-25
-93,Ryan Rollins,PG/SG/G,MIL,-0.25,8.0,7.4,0.6,SG,44,6,30,0.05,False,,1.02,1.16,-1.41,True,UTIL,dynatyze,93,332,https://dynatyze.com/basketball/players/332,2026-09-25
-94,Pascal Siakam,PF/F/C,IND,-0.26,7.3,7.3,-0.1,PF,42,6,24,0.1,False,,1.01,1.05,-1.31,True,C,dynatyze,94,83,https://dynatyze.com/basketball/players/83,2026-09-25
-95,Keyonte George,PG/SG/G,UTA,-0.3,7.7,7.1,0.6,SG,45,6,29,0.08,False,,0.97,1.11,-1.41,True,UTIL,dynatyze,95,148,https://dynatyze.com/basketball/players/148,2026-09-25
-96,Matas Buzelis,SF/PF/F,CHI,-0.36,7.0,6.7,0.3,SF,41,7,21,0.02,False,,0.91,1.0,-1.36,True,UTIL,dynatyze,96,260,https://dynatyze.com/basketball/players/260,2026-09-25
-97,Grayson Allen,PG/SG/G/SF/F,CHA,-0.38,7.2,6.6,0.6,SG,46,6,28,0.12,False,,0.89,1.03,-1.41,True,UTIL,dynatyze,97,176,https://dynatyze.com/basketball/players/176,2026-09-25
-98,Isaiah Hartenstein,C,OKC,-0.42,6.3,6.3,-0.0,C,30,7,19,0.1,False,,0.85,0.89,-1.31,True,C,dynatyze,98,59,https://dynatyze.com/basketball/players/59,2026-09-25
-99,Jrue Holiday,PG/SG/G,POR,-0.5,6.5,5.8,0.6,SG,47,6,27,0.01,False,,0.77,0.91,-1.41,True,UTIL,dynatyze,99,194,https://dynatyze.com/basketball/players/194,2026-09-25
-100,Reed Sheppard,PG/SG/G,HOU,-0.51,6.4,5.8,0.6,SG,48,6,26,0.04,False,,0.76,0.9,-1.41,True,UTIL,dynatyze,100,425,https://dynatyze.com/basketball/players/425,2026-09-25
-101,Alex Sarr,C,WAS,-0.52,5.7,5.7,0.0,C,31,7,18,0.05,False,,0.75,0.79,-1.31,True,BN,dynatyze,101,112,https://dynatyze.com/basketball/players/112,2026-09-25
-102,Ausar Thompson,SG/G/SF/PF/F,DET,-0.55,6.2,5.5,0.6,SG,49,6,25,0.04,False,,0.72,0.86,-1.41,True,BN,dynatyze,102,113,https://dynatyze.com/basketball/players/113,2026-09-25
-103,Brook Lopez,C,LAC,-0.57,5.4,5.4,0.0,C,32,7,17,0.01,False,,0.7,0.74,-1.31,True,BN,dynatyze,103,172,https://dynatyze.com/basketball/players/172,2026-09-25
-104,John Collins,PF/F/C,DET,-0.58,5.4,5.3,0.0,PF,45,6,21,0.02,False,,0.69,0.73,-1.31,True,BN,dynatyze,104,42,https://dynatyze.com/basketball/players/42,2026-09-25
-105,CJ McCollum,PG/SG/G,ATL,-0.59,5.9,5.3,0.6,SG,50,6,24,0.01,False,,0.68,0.82,-1.41,True,BN,dynatyze,105,137,https://dynatyze.com/basketball/players/137,2026-09-25
-106,Jakob Poeltl,C,TOR,-0.59,5.3,5.3,0.0,C,34,7,15,0.03,False,,0.68,0.72,-1.31,True,BN,dynatyze,106,44,https://dynatyze.com/basketball/players/44,2026-09-25
-107,Kelly Oubre Jr.,SG/G/SF/PF/F,IND,-0.6,5.9,5.2,0.6,SG,51,6,23,0.03,False,,0.67,0.81,-1.41,True,BN,dynatyze,107,86,https://dynatyze.com/basketball/players/86,2026-09-25
-108,Deandre Ayton,C,WAS,-0.62,5.1,5.1,0.0,C,35,7,14,0.18,False,,0.65,0.69,-1.31,True,BN,dynatyze,108,80,https://dynatyze.com/basketball/players/80,2026-09-25
-109,Zach LaVine,PG/SG/G/SF/F,SAC,-0.63,5.7,5.0,0.7,SG,52,6,22,0.08,False,,0.64,0.78,-1.41,True,BN,dynatyze,109,67,https://dynatyze.com/basketball/players/67,2026-09-25
-110,Cameron Johnson,SG/SF/PF/F,DEN,-0.71,5.2,4.5,0.7,SG,53,6,21,0.09,False,,0.56,0.7,-1.41,True,BN,dynatyze,110,50,https://dynatyze.com/basketball/players/50,2026-09-25
-111,Julius Randle,PF/F,BKN,-0.73,4.5,4.4,0.1,PF,48,6,18,0.09,False,,0.54,0.58,-1.31,True,BN,dynatyze,111,104,https://dynatyze.com/basketball/players/104,2026-09-25
-112,Daniel Gafford,C,DAL,-0.8,4.0,4.0,0.1,C,36,7,13,0.19,False,,0.47,0.51,-1.31,True,BN,dynatyze,112,66,https://dynatyze.com/basketball/players/66,2026-09-25
-113,Ayo Dosunmu,PG/SG/G,MIN,-0.8,4.7,4.0,0.7,SG,54,6,20,0.02,False,,0.47,0.61,-1.41,True,BN,dynatyze,113,124,https://dynatyze.com/basketball/players/124,2026-09-25
-114,Herbert Jones,SG/G/SF/PF/F,NOP,-0.82,4.5,3.8,0.7,SG,55,6,19,0.02,False,,0.45,0.59,-1.41,True,BN,dynatyze,114,94,https://dynatyze.com/basketball/players/94,2026-09-25
-115,Tre Jones,PG/SG/G/SF,CHI,-0.84,4.4,3.7,0.7,SG,56,6,18,0.05,False,,0.43,0.57,-1.41,True,BN,dynatyze,115,215,https://dynatyze.com/basketball/players/215,2026-09-25
-116,Christian Braun,SG/G/SF/PF/F,DEN,-0.89,4.1,3.4,0.7,SG,57,6,17,0.02,False,,0.38,0.52,-1.41,True,BN,dynatyze,116,53,https://dynatyze.com/basketball/players/53,2026-09-25
-117,Bez Mbeng,PG/SG/G,MIA,-0.91,4.0,3.3,0.7,SG,58,6,16,0.01,False,,0.36,0.5,-1.41,True,BN,dynatyze,117,4025,https://dynatyze.com/basketball/players/4025,2026-09-25
-118,Brandin Podziemski,PG/SG/G,GSW,-0.92,3.9,3.2,0.7,SG,59,6,15,0.04,False,,0.35,0.49,-1.41,True,BN,dynatyze,118,109,https://dynatyze.com/basketball/players/109,2026-09-25
-119,Tari Eason,SG/G/SF/PF/F,HOU,-0.96,3.7,3.0,0.7,SG,60,6,14,0.02,False,,0.31,0.45,-1.41,True,BN,dynatyze,119,56,https://dynatyze.com/basketball/players/56,2026-09-25
-120,Kevin Porter Jr.,PG/SG/G,MIL,-0.98,3.6,2.8,0.7,SG,61,6,13,0.01,False,,0.29,0.43,-1.41,True,BN,dynatyze,120,273,https://dynatyze.com/basketball/players/273,2026-09-25
-121,P.J. Washington,SF/PF/F/C,DAL,-0.99,3.2,2.8,0.4,SF,51,7,11,0.08,False,,0.28,0.37,-1.36,True,BN,dynatyze,121,79,https://dynatyze.com/basketball/players/79,2026-09-25
-122,Coby White,PG/SG/G,CHA,-0.99,3.5,2.8,0.7,SG,62,6,12,0.09,False,,0.28,0.42,-1.41,True,BN,dynatyze,122,58,https://dynatyze.com/basketball/players/58,2026-09-25
-123,Zion Williamson,SF/PF/F/C,NOP,-1.07,2.7,2.3,0.5,SF,52,7,10,0.07,False,,0.2,0.29,-1.36,True,BN,dynatyze,123,60,https://dynatyze.com/basketball/players/60,2026-09-25
-124,Ty Jerome,PG/SG/G,MEM,-1.08,3.0,2.2,0.8,SG,63,6,11,0.02,False,,0.19,0.33,-1.41,True,BN,dynatyze,124,115,https://dynatyze.com/basketball/players/115,2026-09-25
-125,Collin Gillespie,PG/SG/G,PHX,-1.1,2.9,2.1,0.8,SG,64,6,10,0.02,False,,0.17,0.31,-1.41,True,BN,dynatyze,125,306,https://dynatyze.com/basketball/players/306,2026-09-25
-126,Andrew Nembhard,PG/SG/G,IND,-1.12,2.7,2.0,0.8,SG,65,6,9,0.02,False,,0.15,0.29,-1.41,True,BN,dynatyze,126,168,https://dynatyze.com/basketball/players/168,2026-09-25
-127,Paolo Banchero,SF/PF/F,ORL,-1.14,2.3,1.8,0.5,SF,53,7,9,0.0,False,,0.13,0.22,-1.36,True,BN,dynatyze,127,68,https://dynatyze.com/basketball/players/68,2026-09-25
-128,Bradley Beal,SG/G/SF/F,LAC,-1.14,2.6,1.8,0.8,SG,66,6,8,0.23,False,,0.13,0.27,-1.41,True,BN,dynatyze,128,118,https://dynatyze.com/basketball/players/118,2026-09-25
-129,Zach Edey,C,MEM,-1.15,1.9,1.8,0.2,C,39,7,10,0.09,False,,0.12,0.16,-1.31,True,BN,dynatyze,129,106,https://dynatyze.com/basketball/players/106,2026-09-25
-130,Nic Claxton,PF/C,CHI,-1.24,1.4,1.2,0.2,PF,55,6,11,0.01,False,,0.03,0.07,-1.31,True,BN,dynatyze,130,122,https://dynatyze.com/basketball/players/122,2026-09-25
-131,Ja Morant,PG/G,POR,-1.24,0.0,0.0,0.0,PG,53,4,3,0.22,False,,0.03,0.16,-1.4,False,,dynatyze,131,73,https://dynatyze.com/basketball/players/73,2026-09-25
-132,Santi Aldama,SF/PF/F/C,DAL,-1.25,0.0,0.0,0.0,SF,55,7,7,0.15,False,,0.02,0.11,-1.36,False,,dynatyze,132,105,https://dynatyze.com/basketball/players/105,2026-09-25
-133,Al Horford,PF/F/C,GSW,-1.33,0.0,0.0,0.0,PF,57,6,9,0.01,False,,-0.06,-0.02,-1.31,False,,dynatyze,133,196,https://dynatyze.com/basketball/players/196,2026-09-25
-134,Aaron Gordon,PF/F/C,DEN,-1.34,0.0,0.0,0.0,PF,58,6,8,0.03,False,,-0.07,-0.03,-1.31,False,,dynatyze,134,116,https://dynatyze.com/basketball/players/116,2026-09-25
-135,Dereck Lively II,C,DAL,-1.35,0.0,0.0,0.0,C,44,7,5,0.02,False,,-0.08,-0.04,-1.31,False,,dynatyze,135,62,https://dynatyze.com/basketball/players/62,2026-09-25
-136,Kadary Richmond,SG/G/PF,CLE,-1.37,0.0,0.0,0.0,SG,67,6,7,0.03,False,,-0.1,0.04,-1.41,False,,dynatyze,136,3993,https://dynatyze.com/basketball/players/3993,2026-09-25
-137,Derik Queen,PF/F/C,NOP,-1.37,0.0,0.0,0.0,PF,60,6,6,0.03,False,,-0.1,-0.06,-1.31,False,,dynatyze,137,631,https://dynatyze.com/basketball/players/631,2026-09-25
-138,Neemias Queta,C,BOS,-1.38,0.0,0.0,0.0,C,46,7,3,0.13,False,,-0.11,-0.07,-1.31,False,,dynatyze,138,320,https://dynatyze.com/basketball/players/320,2026-09-25
-139,Kyshawn George,SG/G/SF/PF/F,WAS,-1.4,0.0,0.0,0.0,SG,68,6,6,0.06,False,,-0.13,0.01,-1.41,False,,dynatyze,139,209,https://dynatyze.com/basketball/players/209,2026-09-25
-140,Ace Bailey,SF/PF/F,UTA,-1.43,0.0,0.0,0.0,SF,57,7,5,0.05,False,,-0.16,-0.07,-1.36,False,,dynatyze,140,572,https://dynatyze.com/basketball/players/572,2026-09-25
-141,Cormac Ryan,PG/SG/G,MIL,-1.46,0.0,0.0,0.0,SG,69,6,5,0.02,False,,-0.19,-0.05,-1.41,False,,dynatyze,141,4003,https://dynatyze.com/basketball/players/4003,2026-09-25
-142,Aaron Nesmith,SG/G/SF/F,IND,-1.48,0.0,0.0,0.0,SG,70,6,4,0.02,False,,-0.21,-0.07,-1.41,False,,dynatyze,142,96,https://dynatyze.com/basketball/players/96,2026-09-25
-143,Jerami Grant,SF/PF/F,MEM,-1.49,0.0,0.0,0.0,SF,59,7,3,0.03,False,,-0.22,-0.13,-1.36,False,,dynatyze,143,123,https://dynatyze.com/basketball/players/123,2026-09-25
-144,Ajay Mitchell,PG/SG/G,OKC,-1.5,0.0,0.0,0.0,SG,71,6,3,0.02,False,,-0.23,-0.09,-1.41,False,,dynatyze,144,372,https://dynatyze.com/basketball/players/372,2026-09-25
-145,Robert Williams III,C,POR,-1.51,0.0,0.0,0.0,C,47,7,2,0.0,False,,-0.24,-0.2,-1.31,False,,dynatyze,145,78,https://dynatyze.com/basketball/players/78,2026-09-25
-146,Bobby Portis,PF/F/C,MIA,-1.51,0.0,0.0,0.0,PF,64,6,2,0.01,False,,-0.24,-0.2,-1.31,False,,dynatyze,146,97,https://dynatyze.com/basketball/players/97,2026-09-25
-147,Julian Reese,SF/PF/F/C,NOP,-1.52,0.0,0.0,0.0,SF,60,7,2,0.01,False,,-0.25,-0.16,-1.36,False,,dynatyze,147,4005,https://dynatyze.com/basketball/players/4005,2026-09-25
-148,Jordan Poole,PG/SG/G,NOP,-1.52,0.0,0.0,0.0,SG,72,6,2,0.01,False,,-0.25,-0.11,-1.41,False,,dynatyze,148,52,https://dynatyze.com/basketball/players/52,2026-09-25
-149,Lucas Williamson,SG/SF,,-1.53,0.0,0.0,0.0,SG,73,6,1,0.01,False,,-0.26,-0.12,-1.41,False,,dynatyze,149,4041,https://dynatyze.com/basketball/players/4041,2026-09-25
-150,Julian Champagnie,SG/SF/PF/F,SAS,-1.54,0.0,0.0,0.0,SG,74,6,0,,False,,-0.27,-0.13,-1.41,False,,dynatyze,150,163,https://dynatyze.com/basketball/players/163,2026-09-25
+overall_rank,player,pos,team,score,auction_value,field_value,scarcity_premium,scarce_pos,pos_rank,pos_tier,left_in_tier,gap_to_next,cliff_after,cliff_strength,scarcity_note,field_vorp,pos_vorp,pos_replacement,drafted,draft_slot,source,source_rank,source_id,source_url,source_updated
+1,Nikola Jokić,C,DEN,10.59,72.3,75.3,-2.9,C,1,1,0,1.15,True,major,Last C before major cliff: -1.15 to Victor Wembanyama,11.86,11.9,-1.31,True,C,dynatyze,1,3,https://dynatyze.com/basketball/players/3,2026-09-25
+2,Shai Gilgeous-Alexander,PG/G,OKC,9.81,68.2,70.4,-2.1,PG,1,1,0,4.3,True,major,Last PG before major cliff: -4.30 to Tyrese Maxey,11.08,11.21,-1.4,True,PG,dynatyze,2,2,https://dynatyze.com/basketball/players/2,2026-09-25
+3,Victor Wembanyama,C,SAS,9.44,65.4,68.1,-2.6,C,2,2,0,6.02,True,major,Last C before major cliff: -6.02 to Karl-Anthony Towns,10.71,10.75,-1.31,True,C,dynatyze,3,1,https://dynatyze.com/basketball/players/1,2026-09-25
+4,Tyrese Maxey,PG/SG/G,PHI,5.51,42.5,43.5,-1.0,SG,1,1,2,0.03,False,,,6.78,6.92,-1.41,True,PG,dynatyze,4,8,https://dynatyze.com/basketball/players/8,2026-09-25
+5,Luka Dončić,PG/SG/G,LAL,5.48,42.3,43.3,-1.0,SG,2,1,1,0.13,False,,1 SG left in tier 1,6.75,6.89,-1.41,True,PG,dynatyze,5,4,https://dynatyze.com/basketball/players/4,2026-09-25
+6,Kawhi Leonard,SG/G/SF/PF/F,TOR,5.35,41.5,42.5,-0.9,SG,3,1,0,0.73,True,major,Last SG before major cliff: -0.73 to Kevin Durant,6.62,6.76,-1.41,True,SG,dynatyze,6,125,https://dynatyze.com/basketball/players/125,2026-09-25
+7,Kevin Durant,SG/G/SF/PF/F,HOU,4.62,37.2,37.9,-0.7,SG,4,2,0,0.44,True,major,Last SG before major cliff: -0.44 to Anthony Edwards,5.89,6.03,-1.41,True,SG,dynatyze,7,153,https://dynatyze.com/basketball/players/153,2026-09-25
+8,Jamal Murray,PG/G,DEN,4.35,35.5,36.2,-0.7,PG,4,3,5,0.17,False,,,5.62,5.75,-1.4,True,PG,dynatyze,8,14,https://dynatyze.com/basketball/players/14,2026-09-25
+9,Anthony Edwards,PG/SG/G/SF/F,MIN,4.18,34.5,35.1,-0.6,SG,5,3,0,0.37,True,major,Last SG before major cliff: -0.37 to Donovan Mitchell,5.45,5.59,-1.41,True,PG,dynatyze,9,9,https://dynatyze.com/basketball/players/9,2026-09-25
+10,Donovan Mitchell,PG/SG/G,CLE,3.81,32.3,32.8,-0.5,SG,6,4,2,0.12,False,,,5.08,5.22,-1.41,True,PG,dynatyze,10,28,https://dynatyze.com/basketball/players/28,2026-09-25
+11,James Harden,PG/SG/G,CLE,3.69,31.6,32.1,-0.5,SG,7,4,1,0.23,False,,1 SG left in tier 4,4.96,5.1,-1.41,True,PG,dynatyze,11,154,https://dynatyze.com/basketball/players/154,2026-09-25
+12,Cade Cunningham,PG/SG/G,DET,3.46,30.2,30.6,-0.4,SG,8,4,0,0.25,True,minor,Last SG in tier 4: -0.25 to Tyrese Haliburton,4.73,4.87,-1.41,True,PG,dynatyze,12,12,https://dynatyze.com/basketball/players/12,2026-09-25
+13,Karl-Anthony Towns,PF/F/C,NYK,3.42,29.3,30.4,-1.0,PF,3,3,0,0.42,True,major,Last PF before major cliff: -0.42 to Scottie Barnes,4.69,4.73,-1.31,True,PF,dynatyze,13,6,https://dynatyze.com/basketball/players/6,2026-09-25
+14,Tyrese Haliburton,PG/SG/G,IND,3.21,28.7,29.1,-0.4,SG,9,5,2,0.15,False,,,4.48,4.62,-1.41,True,PG,dynatyze,14,5,https://dynatyze.com/basketball/players/5,2026-09-25
+15,Trey Murphy III,SG/G/SF/F,NOP,3.06,27.8,28.1,-0.3,SG,10,5,1,0.06,False,,1 SG left in tier 5,4.33,4.47,-1.41,True,SG,dynatyze,15,17,https://dynatyze.com/basketball/players/17,2026-09-25
+16,Scottie Barnes,SG/G/SF/PF/F/C,TOR,3.0,27.4,27.7,-0.3,SG,11,5,0,0.24,True,minor,Last SG in tier 5: -0.24 to Derrick White,4.27,4.41,-1.41,True,SG,dynatyze,16,33,https://dynatyze.com/basketball/players/33,2026-09-25
+17,Jayson Tatum,SF/PF/F,BOS,2.99,27.1,27.7,-0.6,SF,6,4,1,0.13,False,,1 SF left in tier 4,4.26,4.35,-1.36,True,SF,dynatyze,17,7,https://dynatyze.com/basketball/players/7,2026-09-25
+18,Jalen Johnson,SF/PF/F,ATL,2.86,26.3,26.9,-0.6,SF,7,4,0,0.14,True,minor,Last SF in tier 4: -0.14 to Dyson Daniels,4.13,4.22,-1.36,True,SF,dynatyze,18,10,https://dynatyze.com/basketball/players/10,2026-09-25
+19,Bam Adebayo,PF/F/C,MIA,2.85,25.9,26.8,-0.9,PF,7,4,2,0.19,False,,,4.12,4.16,-1.31,True,PF,dynatyze,19,39,https://dynatyze.com/basketball/players/39,2026-09-25
+20,Derrick White,PG/SG/G,BOS,2.76,26.0,26.2,-0.2,SG,12,6,6,0.04,False,,,4.03,4.17,-1.41,True,PG,dynatyze,20,40,https://dynatyze.com/basketball/players/40,2026-09-25
+21,Dyson Daniels,PG/SG/G/SF/F,ATL,2.72,25.8,26.0,-0.2,SG,13,6,5,0.06,False,,,3.99,4.13,-1.41,True,SG,dynatyze,21,11,https://dynatyze.com/basketball/players/11,2026-09-25
+22,Amen Thompson,PG/SG/G/SF/PF/F,HOU,2.66,25.4,25.6,-0.2,SG,14,6,4,0.16,False,,,3.93,4.07,-1.41,True,SG,dynatyze,22,35,https://dynatyze.com/basketball/players/35,2026-09-25
+23,Devin Booker,PG/SG/G,PHX,2.5,24.4,24.6,-0.2,SG,15,6,3,0.24,False,,,3.77,3.91,-1.41,True,SG,dynatyze,23,34,https://dynatyze.com/basketball/players/34,2026-09-25
+24,Chet Holmgren,PF/F/C,OKC,2.45,23.5,24.3,-0.8,PF,9,4,0,0.23,True,minor,Last PF in tier 4: -0.23 to Cooper Flagg,3.72,3.76,-1.31,True,PF,dynatyze,24,20,https://dynatyze.com/basketball/players/20,2026-09-25
+25,Stephen Curry,PG/G,GSW,2.44,24.0,24.2,-0.2,PG,14,4,0,0.18,True,minor,Last PG in tier 4: -0.18 to Austin Reaves,3.71,3.84,-1.4,True,G,dynatyze,25,146,https://dynatyze.com/basketball/players/146,2026-09-25
+26,Austin Reaves,PG/SG/G/SF/F,LAL,2.26,23.0,23.1,-0.1,SG,16,6,2,0.04,False,,,3.53,3.67,-1.41,True,SG,dynatyze,26,37,https://dynatyze.com/basketball/players/37,2026-09-25
+27,Cooper Flagg,PG/SG/G/SF/PF/F,DAL,2.22,22.8,22.9,-0.1,SG,17,6,1,0.16,False,,1 SG left in tier 6,3.49,3.63,-1.41,True,SG,dynatyze,27,593,https://dynatyze.com/basketball/players/593,2026-09-25
+28,OG Anunoby,SF/PF/F,NYK,2.18,22.2,22.6,-0.4,SF,12,6,2,0.06,False,,,3.45,3.54,-1.36,True,SF,dynatyze,28,29,https://dynatyze.com/basketball/players/29,2026-09-25
+29,Michael Porter Jr.,SF/PF/F,BKN,2.12,21.9,22.2,-0.4,SF,13,6,1,0.06,False,,1 SF left in tier 6,3.39,3.48,-1.36,True,SF,dynatyze,29,64,https://dynatyze.com/basketball/players/64,2026-09-25
+30,Desmond Bane,PG/SG/G/SF/F,ORL,2.06,21.8,21.9,-0.1,SG,18,6,0,0.42,True,major,Last SG before major cliff: -0.42 to VJ Edgecombe,3.33,3.47,-1.41,True,SG,dynatyze,30,23,https://dynatyze.com/basketball/players/23,2026-09-25
+31,Anthony Davis,PF/F/C,WAS,2.03,21.0,21.7,-0.7,PF,13,5,0,0.21,True,minor,Last PF in tier 5: -0.21 to Jaren Jackson Jr.,3.3,3.34,-1.31,True,PF,dynatyze,31,31,https://dynatyze.com/basketball/players/31,2026-09-25
+32,Jalen Brunson,PG/G,NYK,1.91,20.9,20.9,-0.1,PG,18,5,0,0.27,True,minor,Last PG in tier 5: -0.27 to VJ Edgecombe,3.18,3.31,-1.4,True,G,dynatyze,32,49,https://dynatyze.com/basketball/players/49,2026-09-25
+33,Jaren Jackson Jr.,PF/F/C,UTA,1.82,19.8,20.4,-0.6,PF,14,6,1,0.07,False,,1 PF left in tier 6,3.09,3.13,-1.31,True,PF,dynatyze,33,22,https://dynatyze.com/basketball/players/22,2026-09-25
+34,Evan Mobley,PF/F/C,CLE,1.75,19.3,19.9,-0.6,PF,15,6,0,0.16,True,minor,Last PF in tier 6: -0.16 to Alperen Sengun,3.02,3.06,-1.31,True,PF,dynatyze,34,13,https://dynatyze.com/basketball/players/13,2026-09-25
+35,Joel Embiid,C,PHI,1.69,19.0,19.5,-0.6,C,10,6,3,0.01,False,,,2.96,3.0,-1.31,True,C,dynatyze,35,72,https://dynatyze.com/basketball/players/72,2026-09-25
+36,Onyeka Okongwu,C,ATL,1.68,18.9,19.5,-0.6,C,11,6,2,0.05,False,,,2.95,2.99,-1.31,True,C,dynatyze,36,54,https://dynatyze.com/basketball/players/54,2026-09-25
+37,VJ Edgecombe,PG/SG/G,PHI,1.64,19.3,19.2,0.1,SG,19,7,0,0.41,True,major,Last SG before major cliff: -0.41 to Jalen Williams,2.91,3.05,-1.41,True,G,dynatyze,37,590,https://dynatyze.com/basketball/players/590,2026-09-25
+38,Jalen Duren,C,DET,1.63,18.6,19.2,-0.6,C,12,6,1,0.04,False,,1 C left in tier 6,2.9,2.94,-1.31,True,C,dynatyze,38,55,https://dynatyze.com/basketball/players/55,2026-09-25
+39,Alperen Sengun,PF/F/C,HOU,1.59,18.4,18.9,-0.6,PF,16,7,1,0.03,False,,1 PF left in tier 7,2.86,2.9,-1.31,True,PF,dynatyze,39,57,https://dynatyze.com/basketball/players/57,2026-09-25
+40,Lauri Markkanen,SF/PF/F,UTA,1.56,18.5,18.7,-0.2,SF,15,7,0,0.33,True,major,Last SF before major cliff: -0.33 to Jalen Williams,2.83,2.92,-1.36,True,SF,dynatyze,40,71,https://dynatyze.com/basketball/players/71,2026-09-25
+41,LaMelo Ball,PG/G,MIN,1.36,17.6,17.5,0.1,PG,20,7,5,0.13,False,,,2.63,2.76,-1.4,True,G,dynatyze,41,24,https://dynatyze.com/basketball/players/24,2026-09-25
+42,Nikola Vučević,C,ORL,1.29,16.6,17.0,-0.5,C,14,7,1,0.06,False,,1 C left in tier 7,2.56,2.6,-1.31,True,C,dynatyze,42,119,https://dynatyze.com/basketball/players/119,2026-09-25
+43,Jalen Williams,SG/G/SF/PF/F/C,OKC,1.23,16.8,16.7,0.2,SG,20,8,2,0.0,False,,,2.5,2.64,-1.41,True,SF,dynatyze,43,18,https://dynatyze.com/basketball/players/18,2026-09-25
+44,Josh Giddey,PG/SG/G/SF/F,CHI,1.23,16.8,16.7,0.2,SG,21,8,1,0.07,False,,1 SG left in tier 8,2.5,2.64,-1.41,True,SF,dynatyze,44,43,https://dynatyze.com/basketball/players/43,2026-09-25
+45,Mikal Bridges,SG/G/SF/PF/F,NYK,1.16,16.4,16.2,0.2,SG,22,8,0,0.14,True,minor,Last SG in tier 8: -0.14 to Kyrie Irving,2.43,2.57,-1.41,True,SF,dynatyze,45,81,https://dynatyze.com/basketball/players/81,2026-09-25
+46,De'Aaron Fox,PG/G,SAS,1.14,16.2,16.1,0.1,PG,22,7,3,0.01,False,,,2.41,2.54,-1.4,True,G,dynatyze,46,32,https://dynatyze.com/basketball/players/32,2026-09-25
+47,LeBron James,PG/SF/PF/F,PHI,1.13,16.2,16.0,0.1,PG,23,7,2,0.11,False,,,2.4,2.53,-1.4,True,SF,dynatyze,47,157,https://dynatyze.com/basketball/players/157,2026-09-25
+48,Domantas Sabonis,PF/F/C,SAC,1.11,15.5,15.9,-0.4,PF,21,8,0,0.14,True,minor,Last PF in tier 8: -0.14 to Jimmy Butler III,2.38,2.42,-1.31,True,PF,dynatyze,48,16,https://dynatyze.com/basketball/players/16,2026-09-25
+49,Jarrett Allen,C,CLE,1.04,15.1,15.5,-0.4,C,17,8,0,0.16,True,minor,Last C in tier 8: -0.16 to Donovan Clingan,2.31,2.35,-1.31,True,C,dynatyze,49,48,https://dynatyze.com/basketball/players/48,2026-09-25
+50,Kyrie Irving,PG/SG/G,DAL,1.02,15.6,15.4,0.2,SG,23,9,7,0.05,False,,,2.29,2.43,-1.41,True,G,dynatyze,50,82,https://dynatyze.com/basketball/players/82,2026-09-25
+51,Damian Lillard,PG/G,POR,1.0,15.4,15.2,0.2,PG,25,7,0,0.16,True,minor,Last PG in tier 7: -0.16 to Nickeil Alexander-Walker,2.27,2.4,-1.4,True,G,dynatyze,51,103,https://dynatyze.com/basketball/players/103,2026-09-25
+52,Jimmy Butler III,SG/G/SF/PF/F,GSW,0.97,15.3,15.0,0.2,SG,24,9,6,0.06,False,,,2.24,2.38,-1.41,True,SF,dynatyze,52,166,https://dynatyze.com/basketball/players/166,2026-09-25
+53,Kon Knueppel,SG/G/SF/F,CHA,0.91,14.9,14.7,0.2,SG,25,9,5,0.01,False,,,2.18,2.32,-1.41,True,G,dynatyze,53,611,https://dynatyze.com/basketball/players/611,2026-09-25
+54,Paul George,SG/SF/PF/F,BOS,0.9,14.9,14.6,0.2,SG,26,9,4,0.06,False,,,2.17,2.31,-1.41,True,PF,dynatyze,54,177,https://dynatyze.com/basketball/players/177,2026-09-25
+55,Donovan Clingan,C,POR,0.88,14.1,14.5,-0.4,C,18,9,1,0.05,False,,1 C left in tier 9,2.15,2.19,-1.31,True,C,dynatyze,55,145,https://dynatyze.com/basketball/players/145,2026-09-25
+56,Nickeil Alexander-Walker,PG/SG/G,ATL,0.84,14.5,14.2,0.3,SG,27,9,3,0.01,False,,,2.11,2.25,-1.41,True,G,dynatyze,56,254,https://dynatyze.com/basketball/players/254,2026-09-25
+57,Jaylen Brown,SG/G/SF/PF/F,PHI,0.83,14.4,14.2,0.3,SG,28,9,2,0.07,False,,,2.1,2.24,-1.41,True,PF,dynatyze,57,76,https://dynatyze.com/basketball/players/76,2026-09-25
+58,Myles Turner,C,MIL,0.83,13.8,14.2,-0.4,C,19,9,0,0.33,True,major,Last C before major cliff: -0.33 to Kel'el Ware,2.1,2.14,-1.31,True,C,dynatyze,58,30,https://dynatyze.com/basketball/players/30,2026-09-25
+59,DeMar DeRozan,SG/SF/PF/F,DEN,0.76,14.0,13.7,0.3,SG,29,9,1,0.02,False,,1 SG left in tier 9,2.03,2.17,-1.41,True,G,dynatyze,59,180,https://dynatyze.com/basketball/players/180,2026-09-25
+60,Franz Wagner,SF/PF/F,ORL,0.75,13.7,13.7,-0.0,SF,25,9,1,0.01,False,,1 SF left in tier 9,2.02,2.11,-1.36,True,F,dynatyze,60,19,https://dynatyze.com/basketball/players/19,2026-09-25
+61,Brandon Miller,SG/G/SF/PF/F,CHA,0.74,13.9,13.6,0.3,SG,30,9,0,0.13,True,minor,Last SG in tier 9: -0.13 to Tyler Herro,2.01,2.15,-1.41,True,F,dynatyze,61,41,https://dynatyze.com/basketball/players/41,2026-09-25
+62,Trae Young,PG/G,WAS,0.72,13.7,13.5,0.2,PG,27,8,1,0.11,False,,1 PG left in tier 8,1.99,2.12,-1.4,True,UTIL,dynatyze,62,38,https://dynatyze.com/basketball/players/38,2026-09-25
+63,Tyler Herro,PG/SG/G,MIL,0.61,13.1,12.8,0.3,SG,31,10,0,0.21,True,minor,Last SG in tier 10: -0.21 to Josh Hart,1.88,2.02,-1.41,True,UTIL,dynatyze,63,26,https://dynatyze.com/basketball/players/26,2026-09-25
+64,Jaden McDaniels,SF/PF/F,MIN,0.56,12.5,12.5,0.0,SF,27,10,0,0.16,True,minor,Last SF in tier 10: -0.16 to Josh Hart,1.83,1.92,-1.36,True,F,dynatyze,64,70,https://dynatyze.com/basketball/players/70,2026-09-25
+65,Kel'el Ware,PF/C,MIL,0.5,11.8,12.1,-0.3,PF,29,10,1,0.02,False,,1 PF left in tier 10,1.77,1.81,-1.31,True,C,dynatyze,65,114,https://dynatyze.com/basketball/players/114,2026-09-25
+66,Kristaps Porziņģis,PF/F/C,GSW,0.48,11.7,12.0,-0.3,PF,30,10,0,0.31,True,major,Last PF before major cliff: -0.31 to Deni Avdija,1.75,1.79,-1.31,True,C,dynatyze,66,15,https://dynatyze.com/basketball/players/15,2026-09-25
+67,Ivica Zubac,C,IND,0.46,11.6,11.8,-0.3,C,22,10,2,0.03,False,,,1.73,1.77,-1.31,True,C,dynatyze,67,36,https://dynatyze.com/basketball/players/36,2026-09-25
+68,Rudy Gobert,C,MIN,0.43,11.4,11.7,-0.2,C,23,10,1,0.07,False,,1 C left in tier 10,1.7,1.74,-1.31,True,C,dynatyze,68,102,https://dynatyze.com/basketball/players/102,2026-09-25
+69,Josh Hart,SG/G/SF/F,NYK,0.4,11.9,11.5,0.4,SG,32,11,0,0.1,True,minor,Last SG in tier 11: -0.10 to Jalen Suggs,1.67,1.81,-1.41,True,F,dynatyze,69,45,https://dynatyze.com/basketball/players/45,2026-09-25
+70,Payton Pritchard,PG/G,BOS,0.38,11.7,11.3,0.3,PG,29,9,3,0.08,False,,,1.65,1.78,-1.4,True,UTIL,dynatyze,70,63,https://dynatyze.com/basketball/players/63,2026-09-25
+71,Walker Kessler,C,LAL,0.36,11.0,11.2,-0.2,C,24,10,0,0.31,True,minor,Last C in tier 10: -0.31 to Jabari Smith Jr.,1.63,1.67,-1.31,True,C,dynatyze,71,21,https://dynatyze.com/basketball/players/21,2026-09-25
+72,Jalen Suggs,PG/SG/G,ORL,0.3,11.3,10.8,0.4,SG,33,12,1,0.01,False,,1 SG left in tier 12,1.57,1.71,-1.41,True,UTIL,dynatyze,72,61,https://dynatyze.com/basketball/players/61,2026-09-25
+73,Darius Garland,PG/G,LAC,0.3,11.2,10.8,0.3,PG,31,9,1,0.01,False,,1 PG left in tier 9,1.57,1.7,-1.4,True,UTIL,dynatyze,73,46,https://dynatyze.com/basketball/players/46,2026-09-25
+74,Immanuel Quickley,PG/SG/G,TOR,0.29,11.2,10.8,0.4,SG,34,12,0,0.12,True,minor,Last SG in tier 12: -0.12 to Deni Avdija,1.56,1.7,-1.41,True,UTIL,dynatyze,74,90,https://dynatyze.com/basketball/players/90,2026-09-25
+75,Deni Avdija,SG/G/SF/PF/F,POR,0.17,10.5,10.0,0.4,SG,35,13,5,0.03,False,,,1.44,1.58,-1.41,True,F,dynatyze,75,87,https://dynatyze.com/basketball/players/87,2026-09-25
+76,Keegan Murray,SF/PF/F,SAC,0.15,10.1,9.9,0.1,SF,30,12,4,0.01,False,,,1.42,1.51,-1.36,True,F,dynatyze,76,74,https://dynatyze.com/basketball/players/74,2026-09-25
+77,Brandon Ingram,SG/G/SF/PF/F,LAC,0.14,10.3,9.8,0.4,SG,36,13,4,0.03,False,,,1.41,1.55,-1.41,True,F,dynatyze,77,65,https://dynatyze.com/basketball/players/65,2026-09-25
+78,Dejounte Murray,PG/SG/G,NOP,0.11,10.1,9.7,0.5,SG,37,13,3,0.02,False,,,1.38,1.52,-1.41,True,UTIL,dynatyze,78,47,https://dynatyze.com/basketball/players/47,2026-09-25
+79,Donte DiVincenzo,PG/SG/G/SF/F,MIN,0.09,10.0,9.5,0.5,SG,38,13,2,0.03,False,,,1.36,1.5,-1.41,True,F,dynatyze,79,99,https://dynatyze.com/basketball/players/99,2026-09-25
+80,Cason Wallace,PG/SG/G/SF/F,OKC,0.06,9.8,9.3,0.5,SG,39,13,1,0.02,False,,1 SG left in tier 13,1.33,1.47,-1.41,True,F,dynatyze,80,88,https://dynatyze.com/basketball/players/88,2026-09-25
+81,Jabari Smith Jr.,PF/F/C,HOU,0.05,9.1,9.3,-0.1,PF,34,11,1,0.01,False,,1 PF left in tier 11,1.32,1.36,-1.31,True,C,dynatyze,81,129,https://dynatyze.com/basketball/players/129,2026-09-25
+82,Fred VanVleet,PG/G/F,HOU,0.04,9.6,9.2,0.4,PG,36,10,0,0.29,True,minor,Last PG in tier 10: -0.29 to Ryan Rollins,1.31,1.44,-1.4,True,F,dynatyze,82,84,https://dynatyze.com/basketball/players/84,2026-09-25
+83,Toumani Camara,SG/SF/PF/F,POR,0.04,9.7,9.2,0.5,SG,40,13,0,0.12,True,minor,Last SG in tier 13: -0.12 to Andrew Wiggins,1.31,1.45,-1.41,True,UTIL,dynatyze,83,91,https://dynatyze.com/basketball/players/91,2026-09-25
+84,Giannis Antetokounmpo,PF/F/C,MIA,-0.07,8.4,8.5,-0.1,PF,36,12,7,0.01,False,,,1.2,1.24,-1.31,True,C,dynatyze,84,25,https://dynatyze.com/basketball/players/25,2026-09-25
+85,Andrew Wiggins,SG/G/SF/PF/F,MIA,-0.08,9.0,8.5,0.5,SG,41,14,5,0.1,False,,,1.19,1.33,-1.41,True,UTIL,dynatyze,85,95,https://dynatyze.com/basketball/players/95,2026-09-25
+86,Miles Bridges,SF/PF/F,PHX,-0.1,8.6,8.3,0.2,SF,36,13,4,0.02,False,,,1.17,1.26,-1.36,True,UTIL,dynatyze,86,51,https://dynatyze.com/basketball/players/51,2026-09-25
+87,Saddiq Bey,SF/PF/F,NOP,-0.12,8.4,8.2,0.2,SF,37,13,3,0.02,False,,,1.15,1.24,-1.36,True,UTIL,dynatyze,87,576,https://dynatyze.com/basketball/players/576,2026-09-25
+88,Tobias Harris,SF/PF/F,SAS,-0.14,8.3,8.1,0.2,SF,38,13,2,0.04,False,,,1.13,1.22,-1.36,True,UTIL,dynatyze,88,108,https://dynatyze.com/basketball/players/108,2026-09-25
+89,Mark Williams,C,PHX,-0.16,7.9,8.0,-0.1,C,27,11,2,0.07,False,,,1.11,1.15,-1.31,True,C,dynatyze,89,27,https://dynatyze.com/basketball/players/27,2026-09-25
+90,Devin Vassell,SG/G/SF/F,SAS,-0.18,8.4,7.8,0.5,SG,42,14,4,0.03,False,,,1.09,1.23,-1.41,True,UTIL,dynatyze,90,69,https://dynatyze.com/basketball/players/69,2026-09-25
+91,Norman Powell,SG/G/SF/F,CHI,-0.21,8.2,7.7,0.5,SG,43,14,3,0.04,False,,,1.06,1.2,-1.41,True,UTIL,dynatyze,91,101,https://dynatyze.com/basketball/players/101,2026-09-25
+92,Naz Reid,PF/F/C,CHA,-0.23,7.5,7.5,-0.1,PF,41,12,2,0.03,False,,,1.04,1.08,-1.31,True,C,dynatyze,92,85,https://dynatyze.com/basketball/players/85,2026-09-25
+93,Ryan Rollins,PG/SG/G,MIL,-0.25,8.0,7.4,0.6,SG,44,14,2,0.05,False,,,1.02,1.16,-1.41,True,UTIL,dynatyze,93,332,https://dynatyze.com/basketball/players/332,2026-09-25
+94,Pascal Siakam,PF/F/C,IND,-0.26,7.3,7.3,-0.1,PF,42,12,1,0.1,False,,1 PF left in tier 12,1.01,1.05,-1.31,True,C,dynatyze,94,83,https://dynatyze.com/basketball/players/83,2026-09-25
+95,Keyonte George,PG/SG/G,UTA,-0.3,7.7,7.1,0.6,SG,45,14,1,0.08,False,,1 SG left in tier 14,0.97,1.11,-1.41,True,UTIL,dynatyze,95,148,https://dynatyze.com/basketball/players/148,2026-09-25
+96,Matas Buzelis,SF/PF/F,CHI,-0.36,7.0,6.7,0.3,SF,41,14,1,0.02,False,,1 SF left in tier 14,0.91,1.0,-1.36,True,UTIL,dynatyze,96,260,https://dynatyze.com/basketball/players/260,2026-09-25
+97,Grayson Allen,PG/SG/G/SF/F,CHA,-0.38,7.2,6.6,0.6,SG,46,14,0,0.12,True,minor,Last SG in tier 14: -0.12 to Jrue Holiday,0.89,1.03,-1.41,True,UTIL,dynatyze,97,176,https://dynatyze.com/basketball/players/176,2026-09-25
+98,Isaiah Hartenstein,C,OKC,-0.42,6.3,6.3,-0.0,C,30,12,5,0.1,False,,,0.85,0.89,-1.31,True,C,dynatyze,98,59,https://dynatyze.com/basketball/players/59,2026-09-25
+99,Jrue Holiday,PG/SG/G,POR,-0.5,6.5,5.8,0.6,SG,47,15,6,0.01,False,,,0.77,0.91,-1.41,True,UTIL,dynatyze,99,194,https://dynatyze.com/basketball/players/194,2026-09-25
+100,Reed Sheppard,PG/SG/G,HOU,-0.51,6.4,5.8,0.6,SG,48,15,5,0.04,False,,,0.76,0.9,-1.41,True,UTIL,dynatyze,100,425,https://dynatyze.com/basketball/players/425,2026-09-25
+101,Alex Sarr,C,WAS,-0.52,5.7,5.7,0.0,C,31,12,4,0.05,False,,,0.75,0.79,-1.31,True,BN,dynatyze,101,112,https://dynatyze.com/basketball/players/112,2026-09-25
+102,Ausar Thompson,SG/G/SF/PF/F,DET,-0.55,6.2,5.5,0.6,SG,49,15,4,0.04,False,,,0.72,0.86,-1.41,True,BN,dynatyze,102,113,https://dynatyze.com/basketball/players/113,2026-09-25
+103,Brook Lopez,C,LAC,-0.57,5.4,5.4,0.0,C,32,12,3,0.01,False,,,0.7,0.74,-1.31,True,BN,dynatyze,103,172,https://dynatyze.com/basketball/players/172,2026-09-25
+104,John Collins,PF/F/C,DET,-0.58,5.4,5.3,0.0,PF,45,13,1,0.02,False,,1 PF left in tier 13,0.69,0.73,-1.31,True,BN,dynatyze,104,42,https://dynatyze.com/basketball/players/42,2026-09-25
+105,CJ McCollum,PG/SG/G,ATL,-0.59,5.9,5.3,0.6,SG,50,15,3,0.01,False,,,0.68,0.82,-1.41,True,BN,dynatyze,105,137,https://dynatyze.com/basketball/players/137,2026-09-25
+106,Jakob Poeltl,C,TOR,-0.59,5.3,5.3,0.0,C,34,12,1,0.03,False,,1 C left in tier 12,0.68,0.72,-1.31,True,BN,dynatyze,106,44,https://dynatyze.com/basketball/players/44,2026-09-25
+107,Kelly Oubre Jr.,SG/G/SF/PF/F,IND,-0.6,5.9,5.2,0.6,SG,51,15,2,0.03,False,,,0.67,0.81,-1.41,True,BN,dynatyze,107,86,https://dynatyze.com/basketball/players/86,2026-09-25
+108,Deandre Ayton,C,WAS,-0.62,5.1,5.1,0.0,C,35,12,0,0.18,True,minor,Last C in tier 12: -0.18 to Daniel Gafford,0.65,0.69,-1.31,True,BN,dynatyze,108,80,https://dynatyze.com/basketball/players/80,2026-09-25
+109,Zach LaVine,PG/SG/G/SF/F,SAC,-0.63,5.7,5.0,0.7,SG,52,15,1,0.08,False,,1 SG left in tier 15,0.64,0.78,-1.41,True,BN,dynatyze,109,67,https://dynatyze.com/basketball/players/67,2026-09-25
+110,Cameron Johnson,SG/SF/PF/F,DEN,-0.71,5.2,4.5,0.7,SG,53,15,0,0.09,True,minor,Last SG in tier 15: -0.09 to Ayo Dosunmu,0.56,0.7,-1.41,True,BN,dynatyze,110,50,https://dynatyze.com/basketball/players/50,2026-09-25
+111,Julius Randle,PF/F,BKN,-0.73,4.5,4.4,0.1,PF,48,14,6,0.09,False,,,0.54,0.58,-1.31,True,BN,dynatyze,111,104,https://dynatyze.com/basketball/players/104,2026-09-25
+112,Daniel Gafford,C,DAL,-0.8,4.0,4.0,0.1,C,36,13,0,0.19,True,minor,Last C in tier 13: -0.19 to P.J. Washington,0.47,0.51,-1.31,True,BN,dynatyze,112,66,https://dynatyze.com/basketball/players/66,2026-09-25
+113,Ayo Dosunmu,PG/SG/G,MIN,-0.8,4.7,4.0,0.7,SG,54,16,2,0.02,False,,,0.47,0.61,-1.41,True,BN,dynatyze,113,124,https://dynatyze.com/basketball/players/124,2026-09-25
+114,Herbert Jones,SG/G/SF/PF/F,NOP,-0.82,4.5,3.8,0.7,SG,55,16,1,0.02,False,,1 SG left in tier 16,0.45,0.59,-1.41,True,BN,dynatyze,114,94,https://dynatyze.com/basketball/players/94,2026-09-25
+115,Tre Jones,PG/SG/G/SF,CHI,-0.84,4.4,3.7,0.7,SG,56,16,0,0.05,True,minor,Last SG in tier 16: -0.05 to Christian Braun,0.43,0.57,-1.41,True,BN,dynatyze,115,215,https://dynatyze.com/basketball/players/215,2026-09-25
+116,Christian Braun,SG/G/SF/PF/F,DEN,-0.89,4.1,3.4,0.7,SG,57,17,5,0.02,False,,,0.38,0.52,-1.41,True,BN,dynatyze,116,53,https://dynatyze.com/basketball/players/53,2026-09-25
+117,Bez Mbeng,PG/SG/G,MIA,-0.91,4.0,3.3,0.7,SG,58,17,4,0.01,False,,,0.36,0.5,-1.41,True,BN,dynatyze,117,4025,https://dynatyze.com/basketball/players/4025,2026-09-25
+118,Brandin Podziemski,PG/SG/G,GSW,-0.92,3.9,3.2,0.7,SG,59,17,3,0.04,False,,,0.35,0.49,-1.41,True,BN,dynatyze,118,109,https://dynatyze.com/basketball/players/109,2026-09-25
+119,Tari Eason,SG/G/SF/PF/F,HOU,-0.96,3.7,3.0,0.7,SG,60,17,2,0.02,False,,,0.31,0.45,-1.41,True,BN,dynatyze,119,56,https://dynatyze.com/basketball/players/56,2026-09-25
+120,Kevin Porter Jr.,PG/SG/G,MIL,-0.98,3.6,2.8,0.7,SG,61,17,1,0.01,False,,1 SG left in tier 17,0.29,0.43,-1.41,True,BN,dynatyze,120,273,https://dynatyze.com/basketball/players/273,2026-09-25
+121,P.J. Washington,SF/PF/F/C,DAL,-0.99,3.2,2.8,0.4,SF,51,16,3,0.08,False,,,0.28,0.37,-1.36,True,BN,dynatyze,121,79,https://dynatyze.com/basketball/players/79,2026-09-25
+122,Coby White,PG/SG/G,CHA,-0.99,3.5,2.8,0.7,SG,62,17,0,0.09,True,minor,Last SG in tier 17: -0.09 to Ty Jerome,0.28,0.42,-1.41,True,BN,dynatyze,122,58,https://dynatyze.com/basketball/players/58,2026-09-25
+123,Zion Williamson,SF/PF/F/C,NOP,-1.07,2.7,2.3,0.5,SF,52,16,2,0.07,False,,,0.2,0.29,-1.36,True,BN,dynatyze,123,60,https://dynatyze.com/basketball/players/60,2026-09-25
+124,Ty Jerome,PG/SG/G,MEM,-1.08,3.0,2.2,0.8,SG,63,18,3,0.02,False,,,0.19,0.33,-1.41,True,BN,dynatyze,124,115,https://dynatyze.com/basketball/players/115,2026-09-25
+125,Collin Gillespie,PG/SG/G,PHX,-1.1,2.9,2.1,0.8,SG,64,18,2,0.02,False,,,0.17,0.31,-1.41,True,BN,dynatyze,125,306,https://dynatyze.com/basketball/players/306,2026-09-25
+126,Andrew Nembhard,PG/SG/G,IND,-1.12,2.7,2.0,0.8,SG,65,18,1,0.02,False,,1 SG left in tier 18,0.15,0.29,-1.41,True,BN,dynatyze,126,168,https://dynatyze.com/basketball/players/168,2026-09-25
+127,Paolo Banchero,SF/PF/F,ORL,-1.14,2.3,1.8,0.5,SF,53,16,1,0.0,False,,1 SF left in tier 16,0.13,0.22,-1.36,True,BN,dynatyze,127,68,https://dynatyze.com/basketball/players/68,2026-09-25
+128,Bradley Beal,SG/G/SF/F,LAC,-1.14,2.6,1.8,0.8,SG,66,18,0,0.23,True,minor,Last SG in tier 18: -0.23 to Kadary Richmond,0.13,0.27,-1.41,True,BN,dynatyze,128,118,https://dynatyze.com/basketball/players/118,2026-09-25
+129,Zach Edey,C,MEM,-1.15,1.9,1.8,0.2,C,39,14,0,0.09,True,minor,Last C in tier 14: -0.09 to Nic Claxton,0.12,0.16,-1.31,True,BN,dynatyze,129,106,https://dynatyze.com/basketball/players/106,2026-09-25
+130,Nic Claxton,PF/C,CHI,-1.24,1.4,1.2,0.2,PF,55,15,1,0.01,False,,1 PF left in tier 15,0.03,0.07,-1.31,True,BN,dynatyze,130,122,https://dynatyze.com/basketball/players/122,2026-09-25
+131,Ja Morant,PG/G,POR,-1.24,0.0,0.0,0.0,PG,53,15,0,0.22,True,minor,,0.03,0.16,-1.4,False,,dynatyze,131,73,https://dynatyze.com/basketball/players/73,2026-09-25
+132,Santi Aldama,SF/PF/F/C,DAL,-1.25,0.0,0.0,0.0,SF,55,17,0,0.15,True,minor,,0.02,0.11,-1.36,False,,dynatyze,132,105,https://dynatyze.com/basketball/players/105,2026-09-25
+133,Al Horford,PF/F/C,GSW,-1.33,0.0,0.0,0.0,PF,57,16,5,0.01,False,,,-0.06,-0.02,-1.31,False,,dynatyze,133,196,https://dynatyze.com/basketball/players/196,2026-09-25
+134,Aaron Gordon,PF/F/C,DEN,-1.34,0.0,0.0,0.0,PF,58,16,4,0.03,False,,,-0.07,-0.03,-1.31,False,,dynatyze,134,116,https://dynatyze.com/basketball/players/116,2026-09-25
+135,Dereck Lively II,C,DAL,-1.35,0.0,0.0,0.0,C,44,15,2,0.02,False,,,-0.08,-0.04,-1.31,False,,dynatyze,135,62,https://dynatyze.com/basketball/players/62,2026-09-25
+136,Kadary Richmond,SG/G/PF,CLE,-1.37,0.0,0.0,0.0,SG,67,19,7,0.03,False,,,-0.1,0.04,-1.41,False,,dynatyze,136,3993,https://dynatyze.com/basketball/players/3993,2026-09-25
+137,Derik Queen,PF/F/C,NOP,-1.37,0.0,0.0,0.0,PF,60,16,2,0.03,False,,,-0.1,-0.06,-1.31,False,,dynatyze,137,631,https://dynatyze.com/basketball/players/631,2026-09-25
+138,Neemias Queta,C,BOS,-1.38,0.0,0.0,0.0,C,46,15,0,0.13,True,minor,,-0.11,-0.07,-1.31,False,,dynatyze,138,320,https://dynatyze.com/basketball/players/320,2026-09-25
+139,Kyshawn George,SG/G/SF/PF/F,WAS,-1.4,0.0,0.0,0.0,SG,68,19,6,0.06,False,,,-0.13,0.01,-1.41,False,,dynatyze,139,209,https://dynatyze.com/basketball/players/209,2026-09-25
+140,Ace Bailey,SF/PF/F,UTA,-1.43,0.0,0.0,0.0,SF,57,18,5,0.05,False,,,-0.16,-0.07,-1.36,False,,dynatyze,140,572,https://dynatyze.com/basketball/players/572,2026-09-25
+141,Cormac Ryan,PG/SG/G,MIL,-1.46,0.0,0.0,0.0,SG,69,19,5,0.02,False,,,-0.19,-0.05,-1.41,False,,dynatyze,141,4003,https://dynatyze.com/basketball/players/4003,2026-09-25
+142,Aaron Nesmith,SG/G/SF/F,IND,-1.48,0.0,0.0,0.0,SG,70,19,4,0.02,False,,,-0.21,-0.07,-1.41,False,,dynatyze,142,96,https://dynatyze.com/basketball/players/96,2026-09-25
+143,Jerami Grant,SF/PF/F,MEM,-1.49,0.0,0.0,0.0,SF,59,18,3,0.03,False,,,-0.22,-0.13,-1.36,False,,dynatyze,143,123,https://dynatyze.com/basketball/players/123,2026-09-25
+144,Ajay Mitchell,PG/SG/G,OKC,-1.5,0.0,0.0,0.0,SG,71,19,3,0.02,False,,,-0.23,-0.09,-1.41,False,,dynatyze,144,372,https://dynatyze.com/basketball/players/372,2026-09-25
+145,Robert Williams III,C,POR,-1.51,0.0,0.0,0.0,C,47,16,2,0.0,False,,,-0.24,-0.2,-1.31,False,,dynatyze,145,78,https://dynatyze.com/basketball/players/78,2026-09-25
+146,Bobby Portis,PF/F/C,MIA,-1.51,0.0,0.0,0.0,PF,64,17,2,0.01,False,,,-0.24,-0.2,-1.31,False,,dynatyze,146,97,https://dynatyze.com/basketball/players/97,2026-09-25
+147,Julian Reese,SF/PF/F/C,NOP,-1.52,0.0,0.0,0.0,SF,60,18,2,0.01,False,,,-0.25,-0.16,-1.36,False,,dynatyze,147,4005,https://dynatyze.com/basketball/players/4005,2026-09-25
+148,Jordan Poole,PG/SG/G,NOP,-1.52,0.0,0.0,0.0,SG,72,19,2,0.01,False,,,-0.25,-0.11,-1.41,False,,dynatyze,148,52,https://dynatyze.com/basketball/players/52,2026-09-25
+149,Lucas Williamson,SG/SF,,-1.53,0.0,0.0,0.0,SG,73,19,1,0.01,False,,,-0.26,-0.12,-1.41,False,,dynatyze,149,4041,https://dynatyze.com/basketball/players/4041,2026-09-25
+150,Julian Champagnie,SG/SF/PF/F,SAS,-1.54,0.0,0.0,0.0,SG,74,19,0,,False,,,-0.27,-0.13,-1.41,False,,dynatyze,150,163,https://dynatyze.com/basketball/players/163,2026-09-25
