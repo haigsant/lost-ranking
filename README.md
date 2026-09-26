@@ -11,6 +11,8 @@ with an 824-game season cap across all roster spots.
 pip install -e ".[dev]"
 python -m lost_ranking data/raw/dynatyze_redraft_2026-09-25.csv
 # options: --teams 12 --budget 200 --top 50 -o output/my_values.csv
+# add market prices (ESPN average auction price CSV from the espn-auction-values skill):
+#   --market data/raw/espn_auction_values_2026-09-26.csv
 pytest
 ```
 
@@ -38,6 +40,8 @@ with a Values page and a Strategy page; open it in a browser), and prints a posi
 | Field | Meaning |
 |---|---|
 | `auction_value` | Recommended price (same as `pos_value`) |
+| `market_price`, `market_trend` | Average auction price and its trend from the market file (with `--market`) |
+| `market_gap` | `auction_value - market_price`: positive means the market pays less than our value |
 | `field_value` | Price vs. the best undrafted player at any position |
 | `scarcity_premium` | `auction_value - field_value`: what position scarcity adds or removes |
 | `field_tier` | Tier across the whole field (all positions), using the same tier rules |
@@ -72,9 +76,11 @@ All thresholds live in `LeagueSettings`.
 - **Roster planner:** your lineup slots, prefilled from a sample plan. Add, remove and
   reprice players; it tracks money left, max bid, max core bid (keeping the long-shot
   money), and what the average open core spot buys.
-- **Sample plans:** one superstar, two stars, and balanced, each solved for the best
-  10-player core within $190. At fair prices they project about the same total, so the
-  edge is buying under value.
+- **Sample plans:** one superstar, two stars, balanced, and max score (the ceiling), each
+  solved for the best 10-player core within $190. At fair prices they project about the
+  same total, so the edge is buying under value. With `--market`, a fifth plan buys at
+  market prices, and a Market bargains section lists the biggest gaps between our value
+  and the market.
 - **Where to spend:** field tiers marked Pay up (a major cliff follows), Deep: wait
   (five or more near-equal players) or Fair price.
 - **Positions** and **long shots**.
@@ -85,7 +91,8 @@ All thresholds live in `LeagueSettings`.
 lost_ranking/
   config.py     LeagueSettings: teams, budget, roster, tuning knobs
   positions.py  parse "PG/SG/G", slot eligibility, slot order
-  loaders.py    source CSV -> standard columns (add new sources here)
+  loaders.py    source CSV -> standard columns (add ranking or market sources here)
+  names.py      name keys for joining sources (accents, Jr./III, punctuation)
   valuation.py  draft simulation, replacement levels, VORP, dollars
   scarcity.py   position tiers, cliffs, position summary
   pipeline.py   load -> value -> scarcity -> output tables

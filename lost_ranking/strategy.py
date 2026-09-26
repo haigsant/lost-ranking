@@ -28,12 +28,14 @@ class PlanSpec:
     key: str
     name: str
     summary: str
-    # Exactly `stars` core players priced at or above star_price.
+    # Exactly `stars` core players priced at or above star_price (None = no rule).
     stars: int = 0
-    star_price: int = 40
+    star_price: int | None = None
     # Tiny tie-break that spreads leftover money evenly; at fair prices many rosters
     # score about the same, and this picks the sensible one.
     evenness: float = 0.01
+    # What a player costs: "value" (our fair price) or "market" (e.g. ESPN average price).
+    cost: str = "value"
 
 
 PLAN_SPECS = (
@@ -58,6 +60,19 @@ PLAN_SPECS = (
         stars=0,
         star_price=40,
     ),
+    PlanSpec(
+        "max_score",
+        "Max score at value",
+        "No rules except the center limit: the highest core score the budget buys at our prices. This is the ceiling.",
+        evenness=0.0,
+    ),
+)
+MARKET_PLAN = PlanSpec(
+    "market",
+    "Best buys at market prices",
+    "Same search, but each player costs what the market pays on average. Where the market underrates a player, the budget stretches further.",
+    evenness=0.0,
+    cost="market",
 )
 
 
@@ -74,6 +89,11 @@ class Plan:
     def total_score(self) -> float:
         return float(self.picks["score"].sum())
 
+    @property
+    def worth(self) -> int:
+        """What the picks cost at our values; above spend means the plan buys under value."""
+        return int(self.picks["value_price"].sum())
+
 
 def core_slots(settings: LeagueSettings) -> list[str]:
     """One team's core slots, one entry per spot (e.g. ['PG', ..., 'BN', 'BN'])."""
@@ -85,11 +105,23 @@ def bid_price(values: pd.Series, settings: LeagueSettings) -> pd.Series:
     return values.round().clip(lower=settings.min_bid).astype(int)
 
 
+def has_market(players: pd.DataFrame) -> bool:
+    return "market_price" in players.columns and players["market_price"].notna().any()
+
+
+def plan_cost(players: pd.DataFrame, spec: PlanSpec) -> pd.Series:
+    """Dollars to plan with. Market plans fall back to our value where no market price exists."""
+    if spec.cost == "market":
+        return players["market_price"].fillna(players["auction_value"])
+    return players["auction_value"]
+
+
 def solve_plan(players: pd.DataFrame, settings: LeagueSettings, spec: PlanSpec) -> Plan:
     """Best core roster for one plan spec. players needs player, pos, score, auction_value."""
     pool = players.assign(
         positions=players["pos"].map(parse_positions),
-        price=bid_price(players["auction_value"], settings),
+        price=bid_price(plan_cost(players, spec), settings),
+        value_price=bid_price(players["auction_value"], settings),
     ).reset_index(drop=True)
     slots = core_slots(settings)
 
@@ -107,22 +139,24 @@ def solve_plan(players: pd.DataFrame, settings: LeagueSettings, spec: PlanSpec) 
         slot_rows[j, k] = 1
         player_rows[i, k] = 1
     price_row = np.array([[pool.at[i, "price"] for i, _ in pairs]])
-    is_star = (pool["price"] >= spec.star_price).to_numpy()
-    star_row = np.array([[float(is_star[i]) for i, _ in pairs]])
+    constraints = [
+        LinearConstraint(slot_rows, 1, 1),  # every core slot filled once
+        LinearConstraint(player_rows, 0, 1),  # a player fills at most one slot
+        LinearConstraint(price_row, 0, settings.core_budget),
+    ]
+    if spec.star_price is not None:
+        is_star = (pool["price"] >= spec.star_price).to_numpy()
+        constraints.append(LinearConstraint([[float(is_star[i]) for i, _ in pairs]], spec.stars, spec.stars))
     caps = list(settings.core_position_caps.items())
-    cap_rows = np.array([[float(pos in pool.at[i, "positions"]) for i, _ in pairs] for pos, _ in caps]).reshape(len(caps), n)
+    if caps:
+        cap_rows = [[float(pos in pool.at[i, "positions"]) for i, _ in pairs] for pos, _ in caps]
+        constraints.append(LinearConstraint(cap_rows, 0, [cap for _, cap in caps]))
 
     result = milp(
         objective,
         integrality=np.ones(n),
         bounds=Bounds(0, 1),
-        constraints=[
-            LinearConstraint(slot_rows, 1, 1),  # every core slot filled once
-            LinearConstraint(player_rows, 0, 1),  # a player fills at most one slot
-            LinearConstraint(price_row, 0, settings.core_budget),
-            LinearConstraint(star_row, spec.stars, spec.stars),
-            LinearConstraint(cap_rows, 0, [cap for _, cap in caps]),
-        ],
+        constraints=constraints,
     )
     if not result.success:
         raise ValueError(f"no feasible roster for plan {spec.key!r}: {result.message}")
@@ -172,8 +206,18 @@ def _tier_advice(count: int, cliff: str) -> str:
     return "Fair price"
 
 
+def market_gaps(players: pd.DataFrame, n: int = 12) -> dict[str, pd.DataFrame]:
+    """Core players the market prices furthest below (bargains) and above (overpriced) our value."""
+    priced = players[players["core"] & players["market_price"].notna()]
+    return {
+        "bargains": priced.nlargest(n, "market_gap"),
+        "overpriced": priced.nsmallest(n, "market_gap"),
+    }
+
+
 def build_strategy(players: pd.DataFrame, tiers: pd.DataFrame, settings: LeagueSettings) -> dict:
-    plans = [solve_plan(players[players["core"]], settings, spec) for spec in PLAN_SPECS]
+    specs = PLAN_SPECS + ((MARKET_PLAN,) if has_market(players) else ())
+    plans = [solve_plan(players[players["core"]], settings, spec) for spec in specs]
     taken = set().union(*(set(p.picks["player"]) for p in plans))
     bench_spots = settings.bench_spots
     return {
@@ -188,5 +232,6 @@ def build_strategy(players: pd.DataFrame, tiers: pd.DataFrame, settings: LeagueS
         "plans": plans,
         "long_shots": long_shots(players, settings, taken, max(bench_spots, 8)),
         "tier_guide": tier_guide(players, tiers),
+        "market": market_gaps(players) if has_market(players) else None,
         "bench": BENCH,
     }
